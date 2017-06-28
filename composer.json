@@ -17,7 +17,7 @@
     },
     "autoload": {
         "psr-0": {
-            "MSDev\\DoctrineFileMakerDriverBundle": ""
+            "MSDev\\DoctrineFileMakerDriverBundle": "DoctrineFileMakerDriverBundle"
         }
     },
     "target-dir": "DoctrineFileMakerDriverBundle"
