@@ -1,0 +1,23 @@
+{
+    "name": "matatirosoln/doctrine-filemaker-driver-bundle",
+    "type": "library",
+    "description": "Symfony bundle to implement the FileMaker Doctrine driver",
+    "keywords": ["FileMaker", "PHP API", "CWP"],
+    "authors": [
+        {
+            "name": "Steve Winter",
+            "email": "steve@msdev.co.uk",
+            "homepage": "https://msdev.co.uk"
+        }
+    ],
+    "license" : "MIT",
+    "require": {
+    	"php": ">=7.0.0",
+        "matatirosoln/doctrine-filemaker-driver": "dev"
+    },
+    "autoload": {
+        "psr-0": {
+            "MSDev\\DoctrineFileMakerDriverBundle": ""
+        }
+    },
+}

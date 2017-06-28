@@ -1,0 +1,11 @@
+services:
+    fm.script_service:
+        class: MSDev\DoctrineFileMakerDriver\Utility\ScriptAccess
+        arguments:
+            - '@doctrine.dbal.default_connection'
+
+    fm.container_service:
+        class: MSDev\DoctrineFileMakerDriver\Utility\ContainerAccess
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - '@fm.script_service'
