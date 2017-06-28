@@ -19,6 +19,5 @@
         "psr-4": {
             "MSDev\\DoctrineFileMakerDriverBundle": "DoctrineFileMakerDriverBundle"
         }
-    },
-    "target-dir": "DoctrineFileMakerDriverBundle"
+    }
 }
