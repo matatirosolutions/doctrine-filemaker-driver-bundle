@@ -10,14 +10,21 @@
             "homepage": "https://msdev.co.uk"
         }
     ],
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@git.msdev.co.uk:fm-doctrine.git"
+        }
+    ],
     "license" : "MIT",
     "require": {
     	"php": ">=7.0.0",
-        "matatirosoln/doctrine-filemaker-driver": "dev"
+        "matatirosoln/doctrine-filemaker-driver": "dev-master"
     },
     "autoload": {
         "psr-0": {
-            "MSDev\\DoctrineFileMakerDriverBundle": ""
+            "DoctrineFileMakerDriverBundle": ""
         }
     },
+    "target-dir": "DoctrineFileMakerDriverBundle"
 }
