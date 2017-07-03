@@ -1,0 +1,14 @@
+{% set width = na ? 'col-xs-4' : 'col-xs-6' %}
+<div class="btn-group btn-toggle" data-toggle="buttons">
+    <label class="btn btn-default {{ width }}{{ ('1' in selected) ? ' active' : '' }}">
+        <input type="radio" name="{{ name }}" id="{{ id }}-1" value="1" autocomplete="off"{{ ('1' in selected) ? ' checked ' : '' }} class="{{ class }}">{{ 'label.yes'|trans }}
+    </label>
+    <label class="btn btn-default {{ width }}{{ ('0' in selected) ? ' active' : '' }}">
+        <input type="radio" name="{{ name }}" id="{{ id }}-2" value="0" autocomplete="off"{{ ('0' in selected) ? ' checked ' : '' }} class="{{ class }}">{{ 'label.no'|trans }}
+    </label>
+    {% if na %}
+        <label class="btn btn-default {{ width }}{{ ('-1' in selected) ? ' active' : '' }}">
+            <input type="radio" name="{{ name }}" id="{{ id }}-3" value="-1" autocomplete="off"{{ ('-1' in selected) ? ' checked ' : '' }} class="{{ class }}">{{ 'label.not-applicable'|trans }}
+        </label>
+    {% endif %}
+</div>

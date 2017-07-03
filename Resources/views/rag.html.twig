@@ -1,0 +1,11 @@
+<div class="btn-group btn-toggle" data-toggle="buttons">
+    <label class="btn btn-default rag-red col-xs-4{{ (red in selected) ? ' active' : '' }}">
+        <input type="radio" name="{{ name }}" id="{{ id }}-1" value="{{ red }}" autocomplete="off"{{ (red in selected) ? ' checked ' : '' }}class="{{ class }}">{{ red }}
+    </label>
+    <label class="btn btn-default rag-amber col-xs-4{{ (amber in selected) ? ' active' : '' }}">
+        <input type="radio" name="{{ name }}" id="{{ id }}-2" value="{{ amber }}" autocomplete="off"{{ (amber in selected) ? ' checked ' : '' }} class="{{ class }}">{{ amber }}
+    </label>
+    <label class="btn btn-default rag-green col-xs-4{{ (green in selected) ? ' active' : '' }}">
+        <input type="radio" name="{{ name }}" id="{{ id }}-3" value="{{ green }}" autocomplete="off"{{ (green in selected) ? ' checked ' : '' }} class="{{ class }}">{{ green }}
+    </label>
+</div>

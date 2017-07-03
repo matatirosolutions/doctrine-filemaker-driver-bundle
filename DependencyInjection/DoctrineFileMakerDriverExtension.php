@@ -18,8 +18,15 @@ class DoctrineFileMakerDriverExtension extends Extension
 
     public function load(array $configs, ContainerBuilder $container)
     {
+
+        $configuration = new Configuration();
+        $processedConfig = $this->processConfiguration( $configuration, $configs );
+
         $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
         $loader->load('services.yml');
+
+        $sd = $container->getDefinition( 'fm.valuelist_service' );
+        $sd->addMethodCall( 'setValuelistLayout', array( $processedConfig[ 'valuelist_layout' ] ) );
 
     }
 

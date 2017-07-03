@@ -1,0 +1,37 @@
+{% import _self as taxon %}
+
+{% set dstr = "" %}
+{% for k,d in data %}
+	{% set dstr = dstr ~ ' data-' ~ k ~ '="' ~ d ~'"' %}
+{% endfor %}
+
+		<div class="input-group input-append dropdown combobox" data-initialize="combobox" id="{{ id }}">
+			<input type="text" class="form-control {{ class }}" value="" name="{{ name }}" {{ dstr|raw }} />
+			<input type="hidden" name="{{ name }}-data" id="{{ id }}-data" value="{{ selected[0] }}" />
+			<div class="input-group-btn">
+				<button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown"><span class="caret"></span></button>
+				<ul class="dropdown-menu dropdown-menu-right">
+					
+					{% for term in terms %}
+						{% if term.title[0:3] != "---" %}
+							{{ taxon.item(term, selected, '') }}
+						{% endif %}
+					{% endfor %}
+
+				</ul>
+			</div>
+		</div>
+
+{% macro item(term, selected, prefix) %}
+    {% import _self as taxon %}
+    <li data-value="{{ term.id }}"{{ (term.id in selected) ? ' data-selected="true"' : '' }}><a href="#">{{ term.title }}</a>
+        {% if term.children is defined %}
+            {% set newpref = prefix ~ "&nbsp;&nbsp;" %}
+            <ul class="dropdown-child">
+                {% for k,child in term.children %}
+                    {{ taxon.item(child, selected, newpref) }}
+                {% endfor %}
+            </ul>
+        {% endif %}
+    </li>
+{% endmacro %}

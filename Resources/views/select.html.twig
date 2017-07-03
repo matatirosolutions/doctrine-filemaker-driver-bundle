@@ -1,0 +1,22 @@
+{% set dstr = "" %}
+{% for k,d in data %}
+    {% set dstr = dstr ~ ' data-' ~ k ~ '="' ~ d ~'"' %}
+{% endfor %}
+
+<select name="{{ name }}" id="{{ id }}"
+        class="{{ class }}"{{ dstr|raw }}{% if disabled %} disabled{% endif %}{% if required %} required{% endif %}>
+    <option disabled selected value=""></option>
+    <optgroup label="">
+        {% for term in terms %}
+            {% if term.title[0:3] == "---" %}
+                {% if term.title[0:4] == "----" and loop.index == 1 %}
+                {% else %}
+                    </optgroup>
+                    <optgroup label="{{ term.title[0:4] == "----" ? "" : term.title[4:] }}">
+                {% endif %}
+            {% else %}
+                <option value="{{ term.id }}"{{ (term.id in selected) ? ' selected' : '' }}>{{ term.title|raw }}</option>
+            {% endif %}
+        {% endfor %}
+    </optgroup>
+</select>

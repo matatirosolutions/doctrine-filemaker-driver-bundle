@@ -9,3 +9,16 @@ services:
         arguments:
             - '@doctrine.dbal.default_connection'
             - '@fm.script_service'
+
+    fm.valuelist_service:
+        class: MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - '@session'
+
+    fm.twig.render_select:
+        class: MSDev\DoctrineFileMakerDriverBundle\Twig\SelectExtension
+        arguments:
+            - '@fm.valuelist_service'
+        tags:
+            - { name: twig.extension }
