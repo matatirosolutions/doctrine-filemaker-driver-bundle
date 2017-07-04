@@ -11,9 +11,12 @@ namespace MSDev\DoctrineFileMakerDriverBundle\DependencyInjection;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
+use Symfony\Component\DependencyInjection\Exception\RuntimeException;
+use Symfony\Component\DependencyInjection\Extension\PrependExtensionInterface;
 use Symfony\Component\Config\FileLocator;
+use MSDev\DoctrineFileMakerDriverBundle\Types\TypeRegistry;
 
-class DoctrineFileMakerDriverExtension extends Extension
+class DoctrineFileMakerDriverExtension extends Extension implements PrependExtensionInterface
 {
 
     public function load(array $configs, ContainerBuilder $container)
@@ -28,6 +31,21 @@ class DoctrineFileMakerDriverExtension extends Extension
         $sd = $container->getDefinition( 'fm.valuelist_service' );
         $sd->addMethodCall( 'setValuelistLayout', array( $processedConfig[ 'valuelist_layout' ] ) );
 
+    }
+
+    public function prepend(ContainerBuilder $container)
+    {
+        $bundles = $container->getParameter('kernel.bundles');
+        if (!isset($bundles['DoctrineBundle'])) {
+            throw new RuntimeException('Doctrine bundle required!');
+        }
+        $config = [
+            'dbal' => [
+                'types' => (new TypeRegistry())->getDoctrineMapping(),
+            ],
+        ];
+
+        $container->prependExtensionConfig('doctrine', $config);
     }
 
 }
