@@ -35,6 +35,11 @@ class FMDateTimeType extends Type
             return date('m/d/Y H:i:s', $value);
         }
 
+        if($value instanceof \DateTime) {
+            return $value->format('m/d/Y H:i:s');
+        }
+
+
         throw ConversionException::conversionFailed(var_export($value, true), $this->name);
     }
 
