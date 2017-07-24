@@ -2,10 +2,10 @@
 
 If you wish to make use of the value lists functionality add the following to 'config.yaml' (or your chosen config file) 
    
-    ```yaml
-    doctrine_file_maker_driver:
-        valuelist_layout: 'ValueLists'
-    ```
+```yaml
+doctrine_file_maker_driver:
+    valuelist_layout: 'ValueLists'
+```
     
 Setting the layout which contains all of the valuelists which you wish to use within your application.
     
@@ -15,10 +15,10 @@ On that layout add a field, for example a global field from a parameters table, 
     
 In your Twig template when you wish to output a value list do this:
     
-    ```twig
-    {{ select_picker('valuelist', 'valuelist name', { 'option': 'value', 'optipon2': value2 }) }}
-    
-    ```
+```twig
+{{ select_picker('valuelist', 'valuelist name', { 'option': 'value', 'optipon2': value2 }) }}
+```
+
 Replace `valuelist name` with the appropriate name from File > Configure > Valuelists
         
 Options which can be passed are
@@ -37,8 +37,6 @@ Options which can be passed are
     - `clear-button` used by Bootstrap Selectpicker (see its documentation)
     
 It's also possible to use `select_picker` passing `static` as the first parameter, and then an array of values to use as the second parameter. Pass the values thus:
-    ```php
-    [{'id': 1, 'title': 'Option one}, {'id': 2, 'title': 'Option two}]
-    ```
-    
-    
+```php
+[{'id': 1, 'title': 'Option one}, {'id': 2, 'title': 'Option two}]
+``` 

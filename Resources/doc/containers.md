@@ -2,31 +2,31 @@
 
 Either request the `fm.container-service` from the container in symfony2 e.g.
 
-    ```php
-        $contaier = $this->get('fm.container-service');
-    ```
+```php
+$contaier = $this->get('fm.container-service');
+```
     
 Or in Symfony3 in a service constructor typehint the ContainerAccess service
     
-        ```php
-        namespace AppBundle\Service;
+```php
+namespace AppBundle\Service;
         
-        use MSDev\DoctrineFileMakerDriver\Utility\ContainerAccess;
+use MSDev\DoctrineFileMakerDriver\Utility\ContainerAccess;
         
-        class MyService
-        {
+class MyService
+{
         
-            /**
-             * @var ContainerAccess $fmScript
-             */
-            protected $fmContainer;
+    /**
+     * @var ContainerAccess $fmScript
+     */
+    protected $fmContainer;
         
-            public function __construct(ContainerAccess $fmContainer)
-            {
-                $this->fmContainer = $fmContainer;
-            }   
-        }
-        ```
+    public function __construct(ContainerAccess $fmContainer)
+    {
+        $this->fmContainer = $fmContainer;
+    }   
+}
+```
         
 ## Get content from a container ##
         
@@ -34,15 +34,15 @@ There are two methods to call depending on the container type.
         
 For an internal container use
         
-        ```php
-            $content = $container->getContainerContent($containerURL);
-        ```
+```php
+$content = $container->getContainerContent($containerURL);
+```
         
 For a container using external storage use
         
-        ```php
-            $content = $container->getExternalContainerContent($containerURL);
-        ```
+```php
+$content = $container->getExternalContainerContent($containerURL);
+```
                 
 ## Inserting content into a container ##
                 
@@ -51,9 +51,9 @@ To insert content into a container requires that you add a script to your soluti
 That script should contain the following
                                
 Then within PHP call
-    ```php
-    $container->insertIntoContainer($layout, $idField, $uuid, $field, $assetPath);
-    ``` 
+```php
+$container->insertIntoContainer($layout, $idField, $uuid, $field, $assetPath);
+``` 
 
  - `layout` (string) the layout to use for the import
  - `idField` (string) the name of the field used to locate the record where the content will be imported
