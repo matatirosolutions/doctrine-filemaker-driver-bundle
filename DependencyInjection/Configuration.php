@@ -27,7 +27,9 @@ class Configuration implements ConfigurationInterface
         $rootNode = $treeBuilder->root('doctrine_file_maker_driver_bundle');
         $rootNode
             ->children()
-                ->scalarNode('valuelist_layout')->end()
+                ->scalarNode('valuelist_layout')
+                    ->defaultValue(false)
+                    ->end()
             ->end();
 
         return $treeBuilder;
