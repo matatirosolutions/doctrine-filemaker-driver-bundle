@@ -1,0 +1,3 @@
+fmdb_translation_export:
+    path:     /translation/export
+    defaults: { _controller: DoctrineFileMakerDriverBundle:TranslationExport:TranslationExport }

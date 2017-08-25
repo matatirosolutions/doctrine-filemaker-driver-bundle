@@ -1,0 +1,18 @@
+MSDev\DoctrineFileMakerDriverBundle\Entity\WebContent:
+    type: entity
+    table: WebContent
+    repositoryClass: MSDev\DoctrineFileMakerDriverBundle\Repository\WebContentRepository
+    fields:
+        id:
+            type: string
+            length: null
+            unique: true
+            nullable: false
+            id: true
+            column: ID
+
+        content:
+            type: text
+            unique: false
+            nullable: true
+            column: Content

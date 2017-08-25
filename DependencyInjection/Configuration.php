@@ -30,6 +30,9 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('valuelist_layout')
                     ->defaultValue(false)
                     ->end()
+                ->scalarNode('javascript_translations')
+                    ->defaultValue(false)
+                    ->end()
             ->end();
 
         return $treeBuilder;
