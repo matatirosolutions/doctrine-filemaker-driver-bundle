@@ -15,7 +15,7 @@ On that layout add a field, for example a global field from a parameters table, 
     
 In your Twig template when you wish to output a value list do this:
     
-```twig
+```yaml
 {{ select_picker('valuelist', 'valuelist name', { 'option': 'value', 'optipon2': value2 }) }}
 ```
 
@@ -37,6 +37,6 @@ Options which can be passed are
     - `clear-button` used by Bootstrap Selectpicker (see its documentation)
     
 It's also possible to use `select_picker` passing `static` as the first parameter, and then an array of values to use as the second parameter. Pass the values thus:
-```php
-[{'id': 1, 'title': 'Option one}, {'id': 2, 'title': 'Option two}]
+```yaml
+[{'id': 1, 'title': 'Option one'}, {'id': 2, 'title': 'Option two'}]
 ``` 
