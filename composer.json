@@ -11,9 +11,10 @@
         }
     ],
     "license" : "MIT",
-    "_comment": "This should require the doctrine driver but while it's in a private repo that's not possible so include that directly first!",
+    "_comment": "",
     "require": {
-    	"php": ">=7.0.0"
+    	"php": ">=7.0.0",
+        "matatirosoln/doctrine-filemaker-driver": "~0.1"
     },
     "autoload": {
         "psr-4": {
