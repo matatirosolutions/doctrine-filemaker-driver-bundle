@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
-use AppBundle\Entity\WebContent;
+use MSDev\DoctrineFileMakerDriverBundle\Entity\WebContent;
 
 class TranslationExportCommand extends ContainerAwareCommand
 {
@@ -58,27 +58,33 @@ class TranslationExportCommand extends ContainerAwareCommand
 
     private function processJavascript(OutputInterface $output)
     {
+        $config = false;
         try {
             $config = $this->getContainer()->getParameter('doctrine_file_maker_driver.javascript_translations');
-        } catch(InvalidArgumentException $e) {
-            $output->writeln("<comment>If you wish to use translations in JavaScript install the ".
-                "BazingaJsTranslationBundle and set config value 'doctrine_file_maker_driver_bundle.javascript_translations' to true</comment>");
+        } catch(InvalidArgumentException $e) { }
+
+        if(!$config) {
+            $output->writeln([
+                "<comment>If you wish to use translations in JavaScript please install the ",
+                "    BazingaJsTranslationBundle",
+                "(composer require willdurand/js-translation-bundle) and set config value ",
+                "    doctrine_file_maker_driver.javascript_translations",
+                "to true</comment>"]);
             return;
         }
 
-        if($config) {
-            try {
-                $command = $this->getApplication()->find('bazinga:js-translation:dump');
-                $return = $command->run($secondaryInput, $output);
-            } catch(CommandNotFoundException $e) {
-                $output->writeln("<comment>To use translations in JavaScript you must install the ".
-                    "BazingaJsTranslationBundle</comment>");
-                return;
-            }
+        try {
+            $secondaryInput = new ArrayInput([]);
+            $command = $this->getApplication()->find('bazinga:js-translation:dump');
+            $return = $command->run($secondaryInput, $output);
+        } catch (CommandNotFoundException $e) {
+            $output->writeln("<comment>To use translations in JavaScript you must install the " .
+                "BazingaJsTranslationBundle</comment>");
+            return;
+        }
 
-            if (0 == $return) {
-                $output->writeln("<info>JavaScript translations updated</info>");
-            }
+        if (0 == $return) {
+            $output->writeln("<info>JavaScript translations updated</info>");
         }
     }
 
