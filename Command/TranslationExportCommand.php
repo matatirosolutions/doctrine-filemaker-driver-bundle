@@ -43,8 +43,6 @@ class TranslationExportCommand extends ContainerAwareCommand
         $text = $this->loadTextFromDB();
         $this->updateFile($text, $output, 'messages');
 
-        $secondaryInput = new ArrayInput([]);
-
         // now update the javascript versions
         $this->processJavascript($output);
 
