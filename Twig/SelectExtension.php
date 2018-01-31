@@ -76,7 +76,7 @@ class SelectExtension extends \Twig_Extension
         $terms = $this->getTerms($type, $data);
 
         return $environment->render(
-            "DoctrineFileMakerDriverBundle::select.html.twig",
+            "@DoctrineFileMakerDriver/select.html.twig",
             array(
                 'terms' => $terms,
                 'class' => isset($opts['class']) ? $opts['class'] : 'selectpicker',
@@ -101,7 +101,7 @@ class SelectExtension extends \Twig_Extension
         $terms = $this->getTerms($type, $data);
 
         return $environment->render(
-            "DoctrineFileMakerDriverBundle::combobox.html.twig",
+            "@DoctrineFileMakerDriver/combobox.html.twig",
             array(
                 'terms' => $terms,
                 'class' => isset($opts['class']) ? $opts['class'] : '',
@@ -123,7 +123,7 @@ class SelectExtension extends \Twig_Extension
     public function renderYesNoNa(\Twig_Environment $environment, $opts = array())
     {
         return $environment->render(
-            "DoctrineFileMakerDriverBundle::yes-no-na.html.twig",
+            "@DoctrineFileMakerDriver/yes-no-na.html.twig",
             array(
                 'class' => isset($opts['class']) ? $opts['class'] : '',
                 'id' => isset($opts['id']) ? $opts['id'] : (isset($opts['name']) ? $opts['name'] : ''),
@@ -138,7 +138,7 @@ class SelectExtension extends \Twig_Extension
     public function renderRAG(\Twig_Environment $environment, $opts = array())
     {
         return $environment->render(
-            "DoctrineFileMakerDriverBundle::rag.html.twig",
+            "@DoctrineFileMakerDriver/rag.html.twig",
             array(
                 'class' => isset($opts['class']) ? $opts['class'] : '',
                 'id' => isset($opts['id']) ? $opts['id'] : (isset($opts['name']) ? $opts['name'] : ''),

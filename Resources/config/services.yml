@@ -30,3 +30,8 @@ services:
             - { name: twig.extension }
         public: true
     MSDev\DoctrineFileMakerDriverBundle\Twig\SelectExtension: '@fm.twig.render_select'
+
+    fm.translation_export:
+        class: MSDev\DoctrineFileMakerDriverBundle\Command\TranslationExportCommand
+        tags:
+            - { name: console.command }
