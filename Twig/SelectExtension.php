@@ -73,49 +73,33 @@ class SelectExtension extends \Twig_Extension
      */
     public function renderSelect(\Twig_Environment $environment, $type, $data, $opts = array())
     {
-        $terms = $this->getTerms($type, $data);
-
         return $environment->render(
             "@DoctrineFileMakerDriver/select.html.twig",
             array(
-                'terms' => $terms,
+                'terms' => $this->getTerms($type, $data),
                 'class' => isset($opts['class']) ? $opts['class'] : 'selectpicker',
                 'id' => isset($opts['id']) ? $opts['id'] : (isset($opts['name']) ? $opts['name'] : ''),
                 'name' => isset($opts['name']) ? $opts['name'] : '',
                 'selected' => isset($opts['selected']) ? $opts['selected'] : array(),
                 'disabled' => isset($opts['disabled']) ? $opts['disabled'] : false,
                 'required' => isset($opts['required']) ? $opts['required'] : false,
-                'data' => array(
-                    'taxonomy' => !is_array($data) ? $data : '',
-                    'live-search' => isset($opts['search']) ? $opts['search'] : 'true',
-                    'hide-disabled' => 'true',
-                    'title' => isset($opts['title']) ? $opts['title'] : 'Select',
-                    'clear-button' => true,
-                ),
+                'data' => $this->setSelectDataAttributes($data, $opts),
             )
         );
     }
 
     public function renderCombo(\Twig_Environment $environment, $type, $data, $opts = array())
     {
-        $terms = $this->getTerms($type, $data);
-
         return $environment->render(
             "@DoctrineFileMakerDriver/combobox.html.twig",
             array(
-                'terms' => $terms,
+                'terms' => $this->getTerms($type, $data),
                 'class' => isset($opts['class']) ? $opts['class'] : '',
                 'id' => isset($opts['id']) ? $opts['id'] : (isset($opts['name']) ? $opts['name'] : ''),
                 'name' => isset($opts['name']) ? $opts['name'] : '',
                 'selected' => isset($opts['selected']) ? $opts['selected'] : array(),
                 'disabled' => isset($opts['disabled']) ? $opts['disabled'] : false,
-                'data' => array(
-                    'taxonomy' => is_int($data) ? $data : '',
-                    'live-search' => 'true',
-                    'hide-disabled' => 'true',
-                    'title' => isset($opts['title']) ? $opts['title'] : 'Select',
-                    'type' => isset($opts['type']) ? $opts['type'] : 'entry',
-                ),
+                'data' => $this->setSelectDataAttributes($data, $opts),
             )
         );
     }
@@ -164,4 +148,20 @@ class SelectExtension extends \Twig_Extension
         }
     }
 
+    private function setSelectDataAttributes($data, array $opts)
+    {
+        $attr = [
+            'taxonomy' => !is_array($data) ? $data : '',
+            'live-search' => isset($opts['search']) ? $opts['search'] : 'true',
+            'hide-disabled' => 'true',
+            'title' => isset($opts['title']) ? $opts['title'] : 'Select',
+            'clear-button' => true,
+            'type' => isset($opts['type']) ? $opts['type'] : 'entry',
+        ];
+        if(!empty($opts['data'])) {
+            $attr = array_merge($attr, $opts['data']);
+        }
+
+        return $attr;
+    }
 }
