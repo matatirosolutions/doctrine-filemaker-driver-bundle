@@ -143,9 +143,11 @@ class TranslationExportCommand extends ContainerAwareCommand
         return file_get_contents($file);
     }
 
+    /**
+     * @param OutputInterface $output
+     */
     private function clearCache(OutputInterface $output)
     {
-
         // and clear the cache
         $command = $this->getApplication()->find('cache:clear');
         $arguments = array(
@@ -157,6 +159,18 @@ class TranslationExportCommand extends ContainerAwareCommand
         $return = $command->run($input, $output);
         if ($return == 0) {
             $output->writeln("<info>Cache cleared</info>");
+        }
+
+        // and then re-warm it
+        $command = $this->getApplication()->find('cache:warm');
+        $arguments = array(
+            'command' => 'cache:warm'
+        );
+        $input = new ArrayInput($arguments);
+
+        $return = $command->run($input, $output);
+        if ($return == 0) {
+            $output->writeln("<info>Cache warmed</info>");
         }
     }
 

@@ -67,7 +67,7 @@ class ValuelistManager
     }
 
 
-    private function loadValuelists()
+    public function loadValuelists()
     {
         if(empty($this->layout)) {
             throw new InvalidConfigurationException('No valuelist layout has been set in config.yml');
