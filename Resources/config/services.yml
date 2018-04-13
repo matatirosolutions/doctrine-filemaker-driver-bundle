@@ -31,6 +31,15 @@ services:
         public: true
     MSDev\DoctrineFileMakerDriverBundle\Twig\SelectExtension: '@fm.twig.render_select'
 
+    fm.twig.access_valuelist:
+            class: MSDev\DoctrineFileMakerDriverBundle\Twig\ValueListExtension
+            arguments:
+                - '@fm.valuelist_service'
+            tags:
+                - { name: twig.extension }
+            public: true
+    MSDev\DoctrineFileMakerDriverBundle\Twig\ValueListExtension: '@fm.twig.access_valuelist'
+
     fm.translation_export:
         class: MSDev\DoctrineFileMakerDriverBundle\Command\TranslationExportCommand
         tags:
