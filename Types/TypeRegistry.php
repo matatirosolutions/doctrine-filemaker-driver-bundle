@@ -14,6 +14,8 @@ class TypeRegistry
     {
         $this->registerType('fmdate', 'fmdate', FMDateType::class);
         $this->registerType('fmdatetime', 'fmdatetime', FMDateTimeType::class);
+        $this->registerType('fmhtml', 'fmhtml', FMHTMLType::class);
+        $this->registerType('array', 'array', FMArrayType::class);
     }
 
     private function registerType($databaseName, $doctrineName, $className, $compatibleDriverMask = null)

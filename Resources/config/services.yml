@@ -3,18 +3,24 @@ services:
         class: MSDev\DoctrineFileMakerDriver\Utility\ScriptAccess
         arguments:
             - '@doctrine.dbal.default_connection'
+        public: true
+    MSDev\DoctrineFileMakerDriver\Utility\ScriptAccess: '@fm.script_service'
 
     fm.container_service:
         class: MSDev\DoctrineFileMakerDriver\Utility\ContainerAccess
         arguments:
             - '@doctrine.dbal.default_connection'
             - '@fm.script_service'
+        public: true
+    MSDev\DoctrineFileMakerDriver\Utility\ContainerAccess: '@fm.container_service'
 
     fm.valuelist_service:
         class: MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager
         arguments:
             - '@doctrine.dbal.default_connection'
             - '@session'
+        public: true
+    MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager: '@fm.valuelist_service'
 
     fm.twig.render_select:
         class: MSDev\DoctrineFileMakerDriverBundle\Twig\SelectExtension
@@ -22,3 +28,19 @@ services:
             - '@fm.valuelist_service'
         tags:
             - { name: twig.extension }
+        public: true
+    MSDev\DoctrineFileMakerDriverBundle\Twig\SelectExtension: '@fm.twig.render_select'
+
+    fm.twig.access_valuelist:
+            class: MSDev\DoctrineFileMakerDriverBundle\Twig\ValueListExtension
+            arguments:
+                - '@fm.valuelist_service'
+            tags:
+                - { name: twig.extension }
+            public: true
+    MSDev\DoctrineFileMakerDriverBundle\Twig\ValueListExtension: '@fm.twig.access_valuelist'
+
+    fm.translation_export:
+        class: MSDev\DoctrineFileMakerDriverBundle\Command\TranslationExportCommand
+        tags:
+            - { name: console.command }

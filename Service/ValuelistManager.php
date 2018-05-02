@@ -67,15 +67,18 @@ class ValuelistManager
     }
 
 
-    private function loadValuelists()
+    public function loadValuelists()
     {
         if(empty($this->layout)) {
             throw new InvalidConfigurationException('No valuelist layout has been set in config.yml');
         }
 
         $layout = $this->fm->getLayout($this->layout);
-        $vls = $layout->getValueListsTwoFields();
+        if($layout instanceof \FileMaker_Error) {
+            return;
+        }
 
+        $vls = $layout->getValueListsTwoFields();
         $lists = [];
         foreach($vls as $name => $values) {
             $list = [];
@@ -89,5 +92,32 @@ class ValuelistManager
         }
 
         $this->session->set('valuelists', $lists);
+    }
+
+    /**
+     * @param string $list
+     * @param string $termId
+     *
+     * @return string
+     * @throws InvalidConfigurationException
+     */
+    public function getTermTitleByIdFromList(string $termId, string $list)
+    {
+        if(empty($this->session->get('valuelists'))) {
+            $this->loadValuelists();
+        }
+
+        $vls = $this->session->get('valuelists');
+        if(!array_key_exists($list, $vls)) {
+            throw new InvalidConfigurationException('There is no valuelist of that name.');
+        }
+
+        foreach($vls[$list] as $term) {
+            if($termId == $term['id']) {
+                return $term['title'];
+            }
+        }
+
+        throw new InvalidConfigurationException("Unable to find a term with ID {$termId} in list {$list}");
     }
 }

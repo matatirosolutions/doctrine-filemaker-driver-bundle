@@ -21,7 +21,6 @@ class DoctrineFileMakerDriverExtension extends Extension implements PrependExten
 
     public function load(array $configs, ContainerBuilder $container)
     {
-
         $configuration = new Configuration();
         $processedConfig = $this->processConfiguration( $configuration, $configs );
 
@@ -31,6 +30,7 @@ class DoctrineFileMakerDriverExtension extends Extension implements PrependExten
         $sd = $container->getDefinition( 'fm.valuelist_service' );
         $sd->addMethodCall( 'setValuelistLayout', array( $processedConfig[ 'valuelist_layout' ] ) );
 
+        $container->setParameter( 'doctrine_file_maker_driver.javascript_translations', $processedConfig[ 'javascript_translations' ] );
     }
 
     public function prepend(ContainerBuilder $container)
