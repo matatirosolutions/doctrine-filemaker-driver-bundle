@@ -63,7 +63,7 @@ class ValuelistManager
             return $vls[$list];
         }
 
-        throw new InvalidConfigurationException('There is no valuelist of that name');
+        throw new InvalidConfigurationException("There is no valuelist named {$list}.");
     }
 
 
@@ -109,7 +109,7 @@ class ValuelistManager
 
         $vls = $this->session->get('valuelists');
         if(!array_key_exists($list, $vls)) {
-            throw new InvalidConfigurationException('There is no valuelist of that name.');
+            throw new InvalidConfigurationException("There is no valuelist named {$list}.");
         }
 
         foreach($vls[$list] as $term) {
