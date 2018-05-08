@@ -1,0 +1,147 @@
+.taxonomy-selector {
+    position: relative;
+    display: block;
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    list-style: none;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.taxonomy-list {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.taxonomy-list .taxonomy-list {
+    padding-left: 30px;
+}
+
+.taxonomy-item {
+    display: block;
+    position: relative;
+    margin: 0;
+    padding: 0;
+    min-height: 20px;
+    font-size: 13px;
+    line-height: 20px;
+}
+
+.taxonomy-item > button {
+    display: block;
+    position: relative;
+    z-index: 10;
+    cursor: pointer;
+    float: left;
+    width: 25px;
+    height: 20px;
+    margin: 5px 0 1px;
+    padding: 0;
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    border: 0;
+    background: transparent;
+    font-size: 12px;
+    line-height: 1;
+    text-align: center;
+    font-weight: bold;
+}
+
+.taxonomy-item > button:before {
+    content: '+';
+    display: block;
+    position: absolute;
+    top: 4px;
+    width: 100%;
+    text-align: center;
+    text-indent: 0;
+}
+
+.taxonomy-item > button[data-action="collapse"]:before {
+    content: '-';
+}
+
+.term-content {
+    display: block;
+    min-height: 30px;
+    height: auto;
+    margin: 5px 0;
+    padding: 5px 0;
+    color: #333;
+    text-decoration: none;
+    font-weight: bold;
+    border: 1px solid #ccc;
+    background: #fafafa;
+    background: -webkit-linear-gradient(top, #fafafa 0%, #eee 100%);
+    background: -moz-linear-gradient(top, #fafafa 0%, #eee 100%);
+    background: linear-gradient(top, #fafafa 0%, #eee 100%);
+    -webkit-border-radius: 3px;
+    border-radius: 3px;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    padding: 0; /**/
+}
+
+.term-content:hover, .dd-check:hover {
+    color: black;
+    background: white;
+}
+
+.term-title {
+    /*font-size: ;*/
+    font-weight: 500;
+    /*margin-bottom: 5px; 5px*/
+    padding-left: 40px;
+    padding-right: 10px;
+    padding-bottom: 9px; /**/
+    display: block;
+    position: relative;
+    top: 1px;
+    border-bottom: 1px solid #ccc;
+}
+
+.term-title p {
+    display: inline;
+    position: relative;
+    top: 4px;
+}
+
+.term-title input {
+    padding: 0;
+}
+
+.term-title span {
+    position: relative;
+    top: 4px;
+}
+
+.term-radio input {
+    position: absolute;
+    top: 5px;
+    left: 7px;
+}
+
+.term-radio {
+    position: absolute;
+    margin: 0;
+    left: 0;
+    top: 0;
+    cursor: pointer;
+    width: 30px;
+    height: 32px;
+    text-indent: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    border: 1px solid #aaa;
+    background: #ddd;
+    background: -webkit-linear-gradient(top, #ddd 0%, #bbb 100%);
+    background: -moz-linear-gradient(top, #ddd 0%, #bbb 100%);
+    background: linear-gradient(top, #ddd 0%, #bbb 100%);
+    border-radius: 3px 0 0 3px;
+    z-index: 2;
+}

@@ -1,0 +1,41 @@
+{% import _self as taxon %}
+{% set depth = 0 %}
+
+<div class="taxonomy-selector" id="{{ id }}">
+    <ol class="taxonomy-list">
+        {% for k,term in terms %}
+            {% if term.title[0:3] != "---" %}
+                {{ taxon.items(selector, term, selected, name, depth, disabled) }}
+                {% set spacer = false %}
+            {% else %}
+                {% set spacer = true %}
+            {% endif %}
+        {% endfor %}
+    </ol>
+</div>
+
+{% macro items(selector, item, selected, name, depth, disabled) %}
+    {% import _self as taxon %}
+    <li class="taxonomy-item" data-id="{{ item.id }}">
+        {% set sel = item.id in selected ? ' checked="checked"' : '' %}
+        <div class="term-radio">
+            <input type="{{ selector }}" name="{{ name }}" value="{{ item.id }}"{{ sel }} data-term="{{ item.title }}" />
+        </div>
+        <div class="term-content">
+            <div class="term-title" data-term-id="{{ item.id }}">
+                <p>
+                    {{ item.title|raw }}
+                </p>
+            </div>
+        </div>
+
+        {% if item.children is defined %}
+            {% set nd = depth + 1 %}
+            <ol class="taxonomy-list">
+                {% for k,child in item.children %}
+                    {{ taxon.items(selector, child, selected, name, nd, disabled) }}
+                {% endfor %}
+            </ol>
+        {% endif %}
+    </li>
+{% endmacro %}
