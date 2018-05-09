@@ -88,7 +88,7 @@ class TaxonomyExtension extends \Twig_Extension
         return $this->twig->render($template, [
             'selector' => $selector,
             'terms' => $this->getTerms($type, $list),
-            'class' => 'taxonomy-selector' . (isset($options['class']) ? ' '.$options['class'] : ''),
+            'class' => 'taxonomy-term' . (isset($options['class']) ? ' '.$options['class'] : ''),
             'id' => isset($options['id']) ? $options['id'] : (isset($options['name']) ? $options['name'] : ''),
             'name' => isset($options['name']) ? $options['name'] : '',
             'selected' => isset($options['selected']) ? $options['selected'] : [],
