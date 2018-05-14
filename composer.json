@@ -14,7 +14,7 @@
     "_comment": "",
     "require": {
     	"php": ">=7.0.0",
-        "matatirosoln/doctrine-filemaker-driver": "~0.1"
+        "matatirosoln/doctrine-filemaker-driver": "^0.1.10"
     },
     "autoload": {
         "psr-4": {
