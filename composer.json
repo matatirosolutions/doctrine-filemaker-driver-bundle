@@ -15,6 +15,10 @@
     "require": {
     	"php": ">=7.0.0"
     },
+    "suggest": {
+        "matatirosoln/doctrine-filemaker-driver": "Use FileMaker through CWP as your backend database",
+        "matatirosoln/doctrine-fm-data-api-driver": "Use FileMaker via the v17+ Data API as your backend database"
+    },
     "autoload": {
         "psr-4": {
             "MSDev\\DoctrineFileMakerDriverBundle\\": ""
