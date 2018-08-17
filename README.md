@@ -1,6 +1,6 @@
 # Doctrine FileMaker driver bundle #
 
-A Symfony bundle to implement the FileMaker Doctrine driver to allow the use the FileMaker CWP API in a Symfony application.
+A Symfony bundle to implement one of the FileMaker Doctrine drivers to allow the use of either FileMaker CWP API or the FileMaker Data API in a Symfony application.
 
 ## Installation ##
 
@@ -9,13 +9,34 @@ Install through composer
 ```php 
 composer require matatirosoln/doctrine-filemaker-driver-bundle
 ```
-    
-For right now you'll need to add `dev-master` to that as there isn't a tagged version yet - expect the first tag in late August 2017 when the first implementation of this goes into a production environment.
-    
-Add the bundle to 'AppKernal.php'
-```php 
-new MSDev\DoctrineFileMakerDriverBundle\DoctrineFileMakerDriverBundle()
+
+**Important Note**: You will also need to install the appropriate driver now that we have also released a driver for the Data API  (this is a breaking chnage in v1.0. Originally the CWP driver was automatically installed by this bundle, however that doesn't now happen because you may not want it ;-).
+
+If you wish to interact with FileMaker using teh CWP API
+
+```bash 
+composer require matatirosoln/doctrine-filemaker-driver
 ```
+
+Alternatively to use the Data API
+
+```bash 
+composer require matatirosoln/doctrine-fm-data-api-driver
+```
+
+## Configuration ##
+
+For symfony less than v4.0 add the bundle to `AppKernal.php`
+```php 
+    new MSDev\DoctrineFileMakerDriverBundle\DoctrineFileMakerDriverBundle()
+```
+
+For Symfony v4+ add the bundle to `bundles.php`
+```php
+    MSDev\DoctrineFileMakerDriverBundle\DoctrineFileMakerDriverBundle::class => ['all' => true],
+```
+
+
 
 Configure Doctrine to use the FileMaker driver. In your Doctrine configuration comment out 
 ```yaml 
@@ -25,9 +46,13 @@ and replace it with
 
 ```yaml 
 driver_class: MSDev\DoctrineFileMakerDriver\FMDriver
+
+    or
+
+driver_class: MSDev\DoctrineFMDataAPIDriver\FMDriver
 ```
     
-If you wish to make use of the value lists functionality add the following to 'config.yaml' (or your chosen config file) 
+If you wish to make use of the value lists functionality (currently only supported when using the PHP API driver because the Data API doesn't yet offer access to value lists) add the following to 'config.yaml' (or your chosen config file) 
    
 ```yaml
 doctrine_file_maker_driver:

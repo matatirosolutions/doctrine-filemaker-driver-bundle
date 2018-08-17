@@ -6,6 +6,13 @@ services:
         public: true
     MSDev\DoctrineFileMakerDriver\Utility\ScriptAccess: '@fm.script_service'
 
+    fm-data-api.script_service:
+        class: MSDev\DoctrineFMDataAPIDriver\Utility\ScriptAccess
+        arguments:
+            - '@doctrine.dbal.default_connection'
+        public: true
+    MSDev\DoctrineFMDataAPIDriver\Utility\ScriptAccess: '@fm-data-api.script_service'
+
     fm.container_service:
         class: MSDev\DoctrineFileMakerDriver\Utility\ContainerAccess
         arguments:

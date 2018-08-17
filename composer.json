@@ -13,8 +13,7 @@
     "license" : "MIT",
     "_comment": "",
     "require": {
-    	"php": ">=7.0.0",
-        "matatirosoln/doctrine-filemaker-driver": "^0.2"
+    	"php": ">=7.0.0"
     },
     "autoload": {
         "psr-4": {
