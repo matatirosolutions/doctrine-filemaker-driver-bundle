@@ -1,7 +1,7 @@
 {
     "name": "matatirosoln/doctrine-filemaker-driver-bundle",
     "type": "library",
-    "description": "Symfony bundle to implement the FileMaker Doctrine driver",
+    "description": "Symfony bundle to implement one of the FileMaker Doctrine drivers",
     "keywords": ["FileMaker", "PHP API", "CWP"],
     "authors": [
         {
@@ -13,7 +13,7 @@
     "license" : "MIT",
     "_comment": "",
     "require": {
-    	"php": ">=7.0.0"
+    	"php": ">=7.1.0"
     },
     "suggest": {
         "matatirosoln/doctrine-filemaker-driver": "Use FileMaker through CWP as your backend database",
