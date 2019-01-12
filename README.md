@@ -12,7 +12,7 @@ composer require matatirosoln/doctrine-filemaker-driver-bundle
 
 **Important Note**: You will also need to install the appropriate driver now that we have also released a driver for the Data API  (this is a breaking change in v1.0. Originally the CWP driver was automatically installed by this bundle, however that doesn't now happen because you may not want it ;-).
 
-If you wish to interact with FileMaker using the CWP API
+If you wish to interact with FileMaker using the CWP PHP API
 
 ```bash 
 composer require matatirosoln/doctrine-filemaker-driver
