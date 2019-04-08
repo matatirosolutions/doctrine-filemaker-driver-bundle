@@ -32,11 +32,11 @@ class FMTimeType extends Type
         }
 
         if(is_int($value) && $value > 0) {
-            return date('H:i', $value);
+            return date('H:i:s', $value);
         }
 
         if($value instanceof \DateTime) {
-            return $value->format('H:i');
+            return $value->format('H:i:s');
         }
 
 
@@ -49,8 +49,8 @@ class FMTimeType extends Type
             return null;
         }
 
-        $date = \DateTime::createFromFormat('H:i', $value);
-        if($date && $date->format('H:i') === $value) {
+        $date = \DateTime::createFromFormat('H:i:s', $value);
+        if($date && $date->format('H:i:s') === $value) {
             return $date;
         }
 
