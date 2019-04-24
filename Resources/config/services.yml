@@ -28,6 +28,14 @@ services:
         public: true
     MSDev\DoctrineFileMakerDriver\Utility\ContainerAccess: '@fm.container_service'
 
+    fm-data-api.container_service:
+        class: MSDev\DoctrineFMDataAPIDriver\Utility\ContainerAccess
+        arguments:
+            - '@doctrine.dbal.default_connection'
+            - '@fm-data-api.script_service'
+        public: true
+    MSDev\DoctrineFMDataAPIDriver\Utility\ContainerAccess: '@fm-data-api.container_service'
+
     fm.valuelist_service:
         class: MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager
         arguments:
