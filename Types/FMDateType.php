@@ -55,4 +55,12 @@ class FMDateType extends Type
 
         throw ConversionException::conversionFailed(var_export($value, true), $this->name);
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    {
+        return true;
+    }
 }
