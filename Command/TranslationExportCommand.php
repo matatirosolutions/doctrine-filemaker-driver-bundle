@@ -136,7 +136,10 @@ class TranslationExportCommand extends Command
      *
      * @param string $file
      * @param string $language
-     * @return mixed|string
+     *
+     * @return string
+     *
+     * @throws \Exception
      */
     private function loadOrCreateFile($file, $language)
     {
@@ -224,13 +227,20 @@ class TranslationExportCommand extends Command
             /** @noinspection PhpUndefinedFieldInspection
              * @var \SimpleXMLElement $trans */
             $trans = $xml->file->body->addChild('trans-unit');
-            $trans->addAttribute('id', trim($contentRow->getId()));
-            $trans->addAttribute('resname', trim($contentRow->getId()));
-            $trans->addChild('source', trim($contentRow->getContent()));
-            $trans->addChild('target', trim($contentRow->getContent()));
+            $trans->addAttribute('id', $this->cleanContent($contentRow->getId()));
+            $trans->addAttribute('resname', $this->cleanContent($contentRow->getId()));
+            $trans->addChild('source', $this->cleanContent($contentRow->getContent()));
+            $trans->addChild('target', $this->cleanContent($contentRow->getContent()));
         }
 
         return $xml;
+    }
+
+    private function cleanContent($string)
+    {
+        return trim(
+            htmlspecialchars($string, ENT_QUOTES)
+        );
     }
 
 
