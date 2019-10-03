@@ -24,8 +24,12 @@ class DoctrineFileMakerDriverExtension extends Extension implements PrependExten
         $configuration = new Configuration();
         $processedConfig = $this->processConfiguration( $configuration, $configs );
 
-        $loader = new YamlFileLoader($container, new FileLocator(__DIR__.'/../Resources/config'));
-        $loader->load('services.yml');
+        // Need to work out which driver is installed (or if they are both present)
+        $services = $this->determineDriver();
+        if($services) {
+            $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
+            $loader->load($services);
+        }
 
         $sd = $container->getDefinition( 'fm.valuelist_service' );
         $sd->addMethodCall( 'setValuelistLayout', array( $processedConfig[ 'valuelist_layout' ] ) );
@@ -48,4 +52,32 @@ class DoctrineFileMakerDriverExtension extends Extension implements PrependExten
         $container->prependExtensionConfig('doctrine', $config);
     }
 
+    private function determineDriver()
+    {
+        $isCWP = $this->isCWP();
+        $isDAPI = $this->isDAPI();
+
+        if(!$isCWP && !$isDAPI) {
+            return false;
+        }
+
+        if(!$isCWP) {
+            return 'dapi-services.yml';
+        }
+        if(!$isDAPI) {
+            return 'cwp-services.yml';
+        }
+
+        return 'services.yml';
+    }
+
+    private function isCWP()
+    {
+        return class_exists('\MSDev\DoctrineFileMakerDriver\FMPlatform');
+    }
+
+    private function isDAPI()
+    {
+        return class_exists('\MSDev\DoctrineFMDataAPIDriver\FMPlatform');
+    }
 }
