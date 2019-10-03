@@ -23,8 +23,9 @@ class Configuration implements ConfigurationInterface
      */
     public function getConfigTreeBuilder()
     {
-        $treeBuilder = new TreeBuilder();
-        $rootNode = $treeBuilder->root('doctrine_file_maker_driver_bundle');
+        $treeBuilder = new TreeBuilder('doctrine_file_maker_driver_bundle');
+        // BC for symfony/config < 4.2
+        $rootNode = method_exists($treeBuilder, 'getRootNode') ? $treeBuilder->getRootNode() : $treeBuilder->root('doctrine_file_maker_driver_bundle');
         $rootNode
             ->children()
                 ->scalarNode('valuelist_layout')

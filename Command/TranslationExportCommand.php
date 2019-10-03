@@ -2,7 +2,8 @@
 
 namespace MSDev\DoctrineFileMakerDriverBundle\Command;
 
-use Symfony\Bundle\FrameworkBundle\Command\ContainerAwareCommand;
+use Doctrine\ORM\EntityManagerInterface;
+use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -10,15 +11,41 @@ use Symfony\Component\Console\Input\ArrayInput;
 use Symfony\Component\DependencyInjection\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Exception\CommandNotFoundException;
 use MSDev\DoctrineFileMakerDriverBundle\Entity\WebContent;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpKernel\Kernel;
 
-class TranslationExportCommand extends ContainerAwareCommand
+class TranslationExportCommand extends Command
 {
+    /** @var array  */
+    private $languages = [];
 
-    protected $languages = [];
+    /** @var EntityManagerInterface */
+    private $em;
+
+    /** @var string */
+    private $projectDir;
+
+    /** @var ParameterBagInterface */
+    private $params;
 
     /**
-     * (non-PHPdoc)
-     * @see \Symfony\Component\Console\Command\Command::configure()
+     * TranslationExportCommand constructor.
+     * @param EntityManagerInterface $em
+     * @param ParameterBagInterface $params
+     * @param string $projectDir
+     */
+    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, string $projectDir)
+    {
+        parent::__construct(null);
+
+        $this->em = $em;
+        $this->params = $params;
+        $this->projectDir = $projectDir;
+    }
+
+
+    /**
+     * {@inheritDoc}
      */
     protected function configure()
     {
@@ -38,7 +65,6 @@ class TranslationExportCommand extends ContainerAwareCommand
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
-
         // load the content of the WebContent table from FM
         $text = $this->loadTextFromDB();
         $this->updateFile($text, $output, 'messages');
@@ -58,7 +84,7 @@ class TranslationExportCommand extends ContainerAwareCommand
     {
         $config = false;
         try {
-            $config = $this->getContainer()->getParameter('doctrine_file_maker_driver.javascript_translations');
+            $config = $this->params->get('doctrine_file_maker_driver.javascript_translations');
         } catch(InvalidArgumentException $e) { }
 
         if(!$config) {
@@ -71,8 +97,15 @@ class TranslationExportCommand extends ContainerAwareCommand
             return;
         }
 
+        $secondaryInput = new ArrayInput([]);
+        if(Kernel::MAJOR_VERSION >= 4) {
+            $secondaryInput = new ArrayInput([
+                'target' => $this->projectDir . '/translations/js/',
+                '--format' => ['json']
+            ]);
+        }
+
         try {
-            $secondaryInput = new ArrayInput([]);
             $command = $this->getApplication()->find('bazinga:js-translation:dump');
             $return = $command->run($secondaryInput, $output);
         } catch (CommandNotFoundException $e) {
@@ -108,7 +141,6 @@ class TranslationExportCommand extends ContainerAwareCommand
     private function loadOrCreateFile($file, $language)
     {
         $qualifiedFile = $this->getTranslationsPath().DIRECTORY_SEPARATOR.$file;
-
         if (!file_exists($qualifiedFile)) {
             touch($qualifiedFile);
             $xml = $this->createEmptyXliffFile($language);
@@ -316,9 +348,11 @@ class TranslationExportCommand extends ContainerAwareCommand
      */
     private function getTranslationsPath()
     {
-        $root = $this->getContainer()->get('kernel')->getRootdir();
+        if(Kernel::MAJOR_VERSION >= 4) {
+            return $this->projectDir . '/translations';
+        }
 
-        return $root.'/../vendor/matatirosoln/doctrine-filemaker-driver-bundle/Resources/translations';
+        return $this->projectDir . '/vendor/matatirosoln/doctrine-filemaker-driver-bundle/Resources/translations';
     }
 
     /**
@@ -326,8 +360,7 @@ class TranslationExportCommand extends ContainerAwareCommand
      */
     private function loadTextFromDB()
     {
-        $em = $this->getContainer()->get('doctrine');
-        return $em->getRepository('DoctrineFileMakerDriverBundle:WebContent')
+        return $this->em->getRepository('DoctrineFileMakerDriverBundle:WebContent')
             ->findAll();
     }
 

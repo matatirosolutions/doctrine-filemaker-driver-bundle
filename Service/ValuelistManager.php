@@ -9,16 +9,12 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\Service;
 
 use Doctrine\DBAL\Connection;
-use MSDev\DoctrineFileMakerDriver\FMConnection;
 use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
-use \FileMaker;
 
 class ValuelistManager
 {
-    /**
-     * @var FMConnection
-     */
+
     private $connection;
 
     /**
@@ -73,6 +69,10 @@ class ValuelistManager
             throw new InvalidConfigurationException('No valuelist layout has been set in config.yml');
         }
 
+        if('MSDev\DoctrineFMDataAPIDriver\FMConnection' == get_class($this->connection)) {
+            return $this->loadDAPIValueLists();
+        }
+
         $layout = $this->fm->getLayout($this->layout);
         if($layout instanceof \FileMaker_Error) {
             return;
@@ -119,5 +119,25 @@ class ValuelistManager
         }
 
         throw new InvalidConfigurationException("Unable to find a term with ID {$termId} in list {$list}");
+    }
+
+    private function loadDAPIValueLists()
+    {
+        $lists = [];
+        try {
+            $resp = $this->connection->performFMRequest('GET', 'layouts/' . $this->layout, []);
+            foreach ($resp['valueLists'] as $list) {
+                $members = [];
+                foreach ($list['values'] as $item) {
+                    $members[] = [
+                        'id' => $item['value'],
+                        'title' => $item['displayValue']
+                    ];
+                }
+                $lists[$list['name']] = $members;
+            }
+        } catch(\Exception $except) {}
+
+        $this->session->set('valuelists', $lists);
     }
 }
