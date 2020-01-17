@@ -9,8 +9,11 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\Twig;
 
 use MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class ValueListExtension extends \Twig_Extension
+class ValueListExtension extends AbstractExtension
 {
     /**
      * @var ValuelistManager
@@ -33,7 +36,7 @@ class ValueListExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'valuelist_term',
                 [$this, 'valuelistTerm'],
                 [
@@ -52,7 +55,7 @@ class ValueListExtension extends \Twig_Extension
         return 'dfmdb_access_valuelist';
     }
 
-    public function valuelistTerm(\Twig_Environment $environment, string $termId, string $list)
+    public function valuelistTerm(Environment $environment, string $termId, string $list)
     {
         return $this->vlm->getTermTitleByIdFromList($termId, $list);
     }

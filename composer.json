@@ -13,7 +13,8 @@
     "license" : "MIT",
     "_comment": "",
     "require": {
-    	"php": ">=7.1.0"
+    	"php": ">=7.1.0",
+        "twig/twig": "^1.38||^2.7||^3.0"
     },
     "suggest": {
         "matatirosoln/doctrine-filemaker-driver": "Use FileMaker through CWP as your backend database",

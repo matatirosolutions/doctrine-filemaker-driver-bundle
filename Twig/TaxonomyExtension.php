@@ -9,8 +9,11 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\Twig;
 
 use MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class TaxonomyExtension extends \Twig_Extension
+class TaxonomyExtension extends AbstractExtension
 {
     /**
      * @var ValuelistManager
@@ -36,7 +39,7 @@ class TaxonomyExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'taxonomy_checkboxes',
                 [$this, 'taxonomyCheckboxes'],
                 [
@@ -44,7 +47,7 @@ class TaxonomyExtension extends \Twig_Extension
                     'needs_environment' => true,
                 ]
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'taxonomy_radio',
                 [$this, 'taxonomyRadioButtons'],
                 [
@@ -70,7 +73,7 @@ class TaxonomyExtension extends \Twig_Extension
      * @param array $options
      * @return string
      */
-    public function taxonomyCheckboxes(\Twig_Environment $environment, string $type, $list, array $options)
+    public function taxonomyCheckboxes(Environment $environment, string $type, $list, array $options)
     {
         $this->twig = $environment;
         return $this->renderTemplate('@DoctrineFileMakerDriver/taxonomy.html.twig', $type, $list, $options, 'checkbox');

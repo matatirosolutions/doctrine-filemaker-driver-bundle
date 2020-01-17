@@ -3,8 +3,11 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\Twig;
 
 use MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager;
+use Twig\Environment;
+use Twig\Extension\AbstractExtension;
+use Twig\TwigFunction;
 
-class SelectExtension extends \Twig_Extension
+class SelectExtension extends AbstractExtension
 {
 
     /**
@@ -28,7 +31,7 @@ class SelectExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'render_select',
                 [$this, 'renderSelect'],
                 [
@@ -36,21 +39,21 @@ class SelectExtension extends \Twig_Extension
                     'needs_environment' => true,
                 ]
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'render_combobox',
                 array($this, 'renderCombo'),
                 array(
                     'is_safe' => array('html'),
                 )
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'render_yes_no_na',
                 array($this, 'renderYesNoNa'),
                 array(
                     'is_safe' => array('html'),
                 )
             ),
-            new \Twig_SimpleFunction(
+            new TwigFunction(
                 'render_rag',
                 array($this, 'renderRAG'),
                 array(
@@ -71,7 +74,7 @@ class SelectExtension extends \Twig_Extension
     /**
      *
      */
-    public function renderSelect(\Twig_Environment $environment, $type, $data, $opts = array())
+    public function renderSelect(Environment $environment, $type, $data, $opts = array())
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/select.html.twig",
@@ -88,7 +91,7 @@ class SelectExtension extends \Twig_Extension
         );
     }
 
-    public function renderCombo(\Twig_Environment $environment, $type, $data, $opts = array())
+    public function renderCombo(TwigFunctionEnvironment $environment, $type, $data, $opts = array())
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/combobox.html.twig",
@@ -104,7 +107,7 @@ class SelectExtension extends \Twig_Extension
         );
     }
 
-    public function renderYesNoNa(\Twig_Environment $environment, $opts = array())
+    public function renderYesNoNa(TwigFunctionEnvironment $environment, $opts = array())
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/yes-no-na.html.twig",
@@ -119,7 +122,7 @@ class SelectExtension extends \Twig_Extension
         );
     }
 
-    public function renderRAG(\Twig_Environment $environment, $opts = array())
+    public function renderRAG(TwigFunctionEnvironment $environment, $opts = array())
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/rag.html.twig",
