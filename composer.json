@@ -14,7 +14,13 @@
     "_comment": "",
     "require": {
     	"php": ">=7.1.0",
-        "twig/twig": "^1.38||^2.7||^3.0"
+        "ext-dom": "*",
+        "ext-simplexml": "*",
+        "doctrine/orm": "2.*",
+        "symfony/console": "^3.4|^4.2|^5.0",
+        "symfony/dependency-injection": "^3.4|^4.2|^5.0",
+        "twig/twig": "^1.38||^2.7||^3.0",
+        "symfony/http-kernel": "^^3.4|^4.2|5.0"
     },
     "suggest": {
         "matatirosoln/doctrine-filemaker-driver": "Use FileMaker through CWP as your backend database",
