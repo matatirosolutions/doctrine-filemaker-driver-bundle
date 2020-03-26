@@ -9,46 +9,44 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\Service;
 
 use Doctrine\DBAL\Connection;
-use Symfony\Component\Config\Definition\Exception\InvalidConfigurationException;
+use MSDev\DoctrineFileMakerDriverBundle\Exception\LayoutNotDefined;
+use MSDev\DoctrineFileMakerDriverBundle\Exception\TermNotFound;
+use MSDev\DoctrineFileMakerDriverBundle\Exception\ValueListNotFound;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+
 
 class ValuelistManager
 {
-
+    /** @var Connection  */
     private $connection;
 
-    /**
-     * @var FileMaker
-     */
-    private $fm;
-
-    /**
-     * @var SessionInterface
-     */
+    /** @var SessionInterface */
     private $session;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $layout = '';
 
-    /**
-     * ValuelistService constructor.
-     */
+
     public function __construct(Connection $connection, SessionInterface $session)
     {
         $this->connection = $connection->getWrappedConnection();
-        $this->fm = $this->connection->getConnection();
         $this->session = $session;
     }
 
-    public function setValuelistLayout($layout)
+    public function setValuelistLayout($layout): void
     {
         $this->layout = $layout;
     }
 
-
-    public function getValuelist(string $list)
+    /**
+     * @param string $list
+     *
+     * @return array
+     *
+     * @throws ValueListNotFound
+     * @throws LayoutNotDefined
+     */
+    public function getValuelist(string $list): array
     {
         if(empty($this->session->get('valuelists'))) {
             $this->loadValuelists();
@@ -59,30 +57,67 @@ class ValuelistManager
             return $vls[$list];
         }
 
-        throw new InvalidConfigurationException("There is no valuelist named {$list}.");
+        throw new ValueListNotFound($list);
     }
 
-
-    public function loadValuelists()
+    /**
+     * @throws LayoutNotDefined
+     */
+    public function loadValuelists(): void
     {
         if(empty($this->layout)) {
-            throw new InvalidConfigurationException('No valuelist layout has been set in config.yml');
+            throw new LayoutNotDefined('No valuelist layout has been set in config.yml');
         }
 
-        if('MSDev\DoctrineFMDataAPIDriver\FMConnection' == get_class($this->connection)) {
-            return $this->loadDAPIValueLists();
+        if('MSDev\DoctrineFMDataAPIDriver\FMConnection' === get_class($this->connection)) {
+            $this->loadDAPIValueLists();
+
+            return;
         }
 
-        $layout = $this->fm->getLayout($this->layout);
-        if($layout instanceof \FileMaker_Error) {
+        $this->loadCWPValueLists();
+    }
+
+    /**
+     * @param string $list
+     * @param string $termId
+     *
+     * @return string
+     * @throws
+     */
+    public function getTermTitleByIdFromList(string $termId, string $list): string
+    {
+        if(empty($this->session->get('valuelists'))) {
+            $this->loadValuelists();
+        }
+
+        $vls = $this->session->get('valuelists');
+        if(!array_key_exists($list, $vls)) {
+            throw new ValueListNotFound($list);
+        }
+
+        foreach($vls[$list] as $term) {
+            if($termId === $term['id']) {
+                return $term['title'];
+            }
+        }
+
+        throw new TermNotFound($list, $termId);
+    }
+
+    private function loadCWPValueLists(): void
+    {
+        $fm = $this->connection->getConnection();
+        $layout = $fm->getLayout($this->layout);
+        if ($layout instanceof \FileMaker_Error) {
             return;
         }
 
         $vls = $layout->getValueListsTwoFields();
         $lists = [];
-        foreach($vls as $name => $values) {
+        foreach ($vls as $name => $values) {
             $list = [];
-            foreach($values as $title => $key) {
+            foreach ($values as $title => $key) {
                 $list[] = [
                     'id' => $key,
                     'title' => $title
@@ -94,34 +129,7 @@ class ValuelistManager
         $this->session->set('valuelists', $lists);
     }
 
-    /**
-     * @param string $list
-     * @param string $termId
-     *
-     * @return string
-     * @throws InvalidConfigurationException
-     */
-    public function getTermTitleByIdFromList(string $termId, string $list)
-    {
-        if(empty($this->session->get('valuelists'))) {
-            $this->loadValuelists();
-        }
-
-        $vls = $this->session->get('valuelists');
-        if(!array_key_exists($list, $vls)) {
-            throw new InvalidConfigurationException("There is no valuelist named {$list}.");
-        }
-
-        foreach($vls[$list] as $term) {
-            if($termId == $term['id']) {
-                return $term['title'];
-            }
-        }
-
-        throw new InvalidConfigurationException("Unable to find a term with ID {$termId} in list {$list}");
-    }
-
-    private function loadDAPIValueLists()
+    private function loadDAPIValueLists(): void
     {
         $lists = [];
         try {
