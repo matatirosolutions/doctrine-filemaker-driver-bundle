@@ -68,3 +68,4 @@ There are a number of useful services etc which this bundle adds to your project
 1. Access to [scripts](Resources/doc/scripts.md "scripts") within your FileMaker solution
 2. Interaction with [containers](Resources/doc/containers.md "containers")
 3. Using [valuelists](Resources/doc/valuelists.md "valuelists") through a twig extension.
+4. Storing [translations](Resources/doc/translations.md "translations") in your FileMaker database.
