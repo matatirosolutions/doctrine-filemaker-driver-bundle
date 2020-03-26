@@ -52,7 +52,7 @@ driver_class: MSDev\DoctrineFileMakerDriver\FMDriver
 driver_class: MSDev\DoctrineFMDataAPIDriver\FMDriver
 ```
     
-If you wish to make use of the value lists functionality (currently only supported when using the PHP API driver because the Data API doesn't yet offer access to value lists) add the following to 'config.yaml' (or your chosen config file) 
+If you wish to make use of the value lists functionality add the following to 'config.yaml' (or your chosen config file) 
    
 ```yaml
 doctrine_file_maker_driver:
