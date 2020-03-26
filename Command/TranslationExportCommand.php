@@ -3,6 +3,11 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use DOMDocument;
+use Exception;
+use RuntimeException;
+use SimpleXMLElement;
+use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -47,7 +52,7 @@ class TranslationExportCommand extends Command
     /**
      * {@inheritDoc}
      */
-    protected function configure()
+    protected function configure(): void
     {
         $this->setName('translation:export')
             ->setDescription('Export the web content from FileMaker into translation files.')
@@ -55,15 +60,15 @@ class TranslationExportCommand extends Command
                 'no-cache-clear',
                 null,
                 InputOption::VALUE_NONE,
-                "Skip clearing the cache; only use this if you plan to clear it "
-                . "manually after running other tasks."
+                'Skip clearing the cache; only use this if you plan to clear it '
+                . 'manually after running other tasks.'
             );
     }
 
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output)
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         // load the content of the WebContent table from FM
         $text = $this->loadTextFromDB();
@@ -73,14 +78,15 @@ class TranslationExportCommand extends Command
         $this->processJavascript($output);
 
         // clear cache unless requested not to
-        if ($input->getOption("no-cache-clear")) {
-            return;
+        if ($input->getOption('no-cache-clear')) {
+            return 0;
         }
 
-        $this->clearCache($output);
+        $this->clearAndRewarmCache($output);
+        return 0;
     }
 
-    private function processJavascript(OutputInterface $output)
+    private function processJavascript(OutputInterface $output): void
     {
         $config = false;
         try {
@@ -89,11 +95,11 @@ class TranslationExportCommand extends Command
 
         if(!$config) {
             $output->writeln([
-                "<comment>If you wish to use translations in JavaScript please install the ",
-                "    BazingaJsTranslationBundle",
-                "(composer require willdurand/js-translation-bundle) and set config value ",
-                "    doctrine_file_maker_driver.javascript_translations",
-                "to true</comment>"]);
+                '<comment>If you wish to use translations in JavaScript please install the ',
+                '    BazingaJsTranslationBundle',
+                '(composer require willdurand/js-translation-bundle) and set config value ',
+                '    doctrine_file_maker_driver.javascript_translations',
+                'to true</comment>']);
             return;
         }
 
@@ -105,27 +111,40 @@ class TranslationExportCommand extends Command
             ]);
         }
 
-        try {
-            $command = $this->getApplication()->find('bazinga:js-translation:dump');
-            $return = $command->run($secondaryInput, $output);
-        } catch (CommandNotFoundException $e) {
-            $output->writeln("<comment>To use translations in JavaScript you must install the " .
-                "BazingaJsTranslationBundle</comment>");
+        $application = $this->getApplication();
+        if(null === $application) {
+            $output->writeln('<error>Unable to retrieve application</error>');
             return;
         }
 
-        if (0 == $return) {
-            $output->writeln("<info>JavaScript translations updated</info>");
+        try {
+            $command = $application->find('bazinga:js-translation:dump');
+            if (0 === $command->run($secondaryInput, $output)) {
+                $output->writeln('<info>JavaScript translations updated</info>');
+            }
+        } catch (CommandNotFoundException $e) {
+            $output->writeln('<comment>To use translations in JavaScript you must install the ' .
+                'BazingaJsTranslationBundle</comment>');
+            return;
+        } catch (Exception $except) {
+            $output->writeln('<error>Unable to run command bazinga:js-translation:dump</error>');
         }
     }
 
-    private function updateFile($text, OutputInterface $output, string $type)
+    /**
+     * @param $text
+     * @param OutputInterface $output
+     * @param string $type
+     *
+     * @throws RuntimeException
+     */
+    private function updateFile($text, OutputInterface $output, string $type): void
     {
         // perform the conversion from the messages strings file
         $en = $this->convertFromDB($text);
 
         $this->writeFile($en, $type, 'en');
-        $output->writeln("<info>en messages translation updated</info>");
+        $output->writeln('<info>en messages translation updated</info>');
 
         // now update the other languages
         $this->updateOtherLanguages($output, $en, $type);
@@ -139,16 +158,16 @@ class TranslationExportCommand extends Command
      *
      * @return string
      *
-     * @throws \Exception
+     * @throws RuntimeException
      */
-    private function loadOrCreateFile($file, $language)
+    private function loadOrCreateFile($file, $language): string
     {
         $qualifiedFile = $this->getTranslationsPath().DIRECTORY_SEPARATOR.$file;
         if (!file_exists($qualifiedFile)) {
             touch($qualifiedFile);
             $xml = $this->createEmptyXliffFile($language);
 
-            $domxml = new \DOMDocument('1.0');
+            $domxml = new DOMDocument('1.0');
             $domxml->preserveWhiteSpace = false;
             $domxml->formatOutput = true;
             $domxml->loadXML($xml->asXML());
@@ -160,72 +179,45 @@ class TranslationExportCommand extends Command
         return $this->loadfile($file);
     }
 
-    /**
-     * Loads the requested file from the translations folder
-     *
-     * @param string $file Name of the file to load
-     * @throws \Exception
-     * @return string                                Content of the file
-     */
-    private function loadFile($file)
+    private function loadFile(string $file): string
     {
         $file = $this->getTranslationsPath().DIRECTORY_SEPARATOR.$file;
 
         if (!file_exists($file)) {
-            throw new \Exception(sprintf('Unable to open source file: %s', $file));
+            throw new RuntimeException(sprintf('Unable to open source file: %s', $file));
         }
 
         return file_get_contents($file);
     }
 
-    /**
-     * @param OutputInterface $output
-     */
-    private function clearCache(OutputInterface $output)
+    private function clearAndRewarmCache(OutputInterface $output): void
     {
-        // and clear the cache
-        $command = $this->getApplication()->find('cache:clear');
-        $arguments = array(
-            'command' => 'cache:clear',
-            '--no-warmup'  => true,
-        );
-        $input = new ArrayInput($arguments);
-
-        $return = $command->run($input, $output);
-        if ($return == 0) {
-            $output->writeln("<info>Cache cleared</info>");
+        $application = $this->getApplication();
+        if(null === $application) {
+            $output->writeln('<error>Unable to retrieve application container</error>');
+            return;
         }
 
-        // and then re-warm it
-        $command = $this->getApplication()->find('cache:warm');
-        $arguments = array(
-            'command' => 'cache:warm'
-        );
-        $input = new ArrayInput($arguments);
-
-        $return = $command->run($input, $output);
-        if ($return == 0) {
-            $output->writeln("<info>Cache warmed</info>");
-        }
+        $this->clearCache($output, $application);
+        $this->warmCache($output, $application);
     }
-
 
     /**
      * Converts the DB records into the en XLIFF document
      * Because the default language for the app is English both the source
      * and the target are English
      *
-     * @param array $contentArray       Array of data from the DB
-     * @return \SimpleXMLElement        XLIF formatted content
+     * @param array $contentArray      Array of data from the DB
+     * @return SimpleXMLElement        XLIF formatted content
      */
-    private function convertFromDB($contentArray)
+    private function convertFromDB($contentArray): SimpleXMLElement
     {
-        $xml = $this->createEmptyXliffFile("en");
+        $xml = $this->createEmptyXliffFile('en');
 
         /** @var WebContent $trans */
         foreach($contentArray as $contentRow) {
             /** @noinspection PhpUndefinedFieldInspection
-             * @var \SimpleXMLElement $trans */
+             * @var SimpleXMLElement $trans */
             $trans = $xml->file->body->addChild('trans-unit');
             $trans->addAttribute('id', $this->cleanContent($contentRow->getId()));
             $trans->addAttribute('resname', $this->cleanContent($contentRow->getId()));
@@ -249,11 +241,11 @@ class TranslationExportCommand extends Command
      * to their translation documents
      *
      * @param OutputInterface $output
-     * @param \SimpleXMLElement $en
+     * @param SimpleXMLElement $en
      * @param $type
-     * @throws \Exception
+     * @throws RuntimeException
      */
-    private function updateOtherLanguages(OutputInterface $output, \SimpleXMLElement $en, $type)
+    private function updateOtherLanguages(OutputInterface $output, SimpleXMLElement $en, $type): void
     {
         // load each language file
         foreach ($this->languages as $lg) {
@@ -261,8 +253,10 @@ class TranslationExportCommand extends Command
             $fileContents = $this->loadOrCreateFile($filename, $lg);
             $$lg = simplexml_load_string($fileContents);
 
-            if (!($$lg instanceof \SimpleXMLElement)) {
-                throw new \Exception(sprintf('File %s does not contain valid xml: %s', $filename, print_r($fileContents, true)));
+            if (!($$lg instanceof SimpleXMLElement)) {
+                throw new RuntimeException(
+                    sprintf('File %s does not contain valid xml: %s', $filename, print_r($fileContents, true))
+                );
             }
         }
 
@@ -271,7 +265,7 @@ class TranslationExportCommand extends Command
         foreach ($en->file->body->{'trans-unit'} as $trans) {
             foreach ($this->languages as $lg) {
                 if (!$this->nodeExists(${$lg}, $trans['id'])) {
-                    /** @var \SimpleXMLElement $t */
+                    /** @var SimpleXMLElement $t */
                     $t = ${$lg}->file->body->addChild('trans-unit');
                     $t->addAttribute('id', (string)$trans['id']);
                     $t->addChild('source', (string)$trans->source);
@@ -290,15 +284,15 @@ class TranslationExportCommand extends Command
     /**
      * Determine if the node in question exists in the current language
      *
-     * @param \SimpleXMLElement $xml
+     * @param SimpleXMLElement $xml
      * @param string $id
      * @return boolean
      */
-    private function nodeExists(\SimpleXMLElement $xml, $id)
+    private function nodeExists(SimpleXMLElement $xml, $id): bool
     {
         /** @noinspection PhpUndefinedFieldInspection */
         foreach ($xml->file->body->{'trans-unit'} as $trans) {
-            if ((string)$trans['id'] == (string)$id) {
+            if ((string)$trans['id'] === (string)$id) {
                 return true;
             }
         }
@@ -308,16 +302,16 @@ class TranslationExportCommand extends Command
 
     /**
      * @param $language
-     * @return \SimpleXMLElement
+     * @return SimpleXMLElement
      */
-    private function createEmptyXliffFile($language)
+    private function createEmptyXliffFile($language): SimpleXMLElement
     {
-        $xml = new \SimpleXMLElement('<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2"/>');
+        $xml = new SimpleXMLElement('<xliff xmlns="urn:oasis:names:tc:xliff:document:1.2" version="1.2"/>');
         $file = $xml->addChild('file');
-        $file->addAttribute('source-language', "en");
+        $file->addAttribute('source-language', 'en');
         $file->addAttribute('target-language', $language);
-        $file->addAttribute('datatype', "plaintext");
-        $file->addAttribute('original', "file.ext");
+        $file->addAttribute('datatype', 'plaintext');
+        $file->addAttribute('original', 'file.ext');
         $file->addChild('body');
 
         return $xml;
@@ -327,36 +321,31 @@ class TranslationExportCommand extends Command
     /**
      * Saves an XLIF XML document to the correct messages file
      *
-     * @param \SimpleXMLElement $xml XML to save
-     * @param string $type Type of file to save (messages, routes etc)
-     * @param string $locale Name of the locale
-     * @throws \Exception
+     * @param SimpleXMLElement $xml     XML to save
+     * @param string $type              Type of file to save (messages, routes etc)
+     * @param string $locale            Name of the locale
+     *
+     * @throws RuntimeException
      */
-    private function writeFile(\SimpleXMLElement $xml, $type, $locale)
+    private function writeFile(SimpleXMLElement $xml, $type, $locale): void
     {
         $file = $this->getTranslationsPath().DIRECTORY_SEPARATOR."{$type}.{$locale}.xlf";
         if (!file_exists($file)) {
-            $handle = fopen($file, 'w');
+            $handle = fopen($file, 'wb');
             fclose($handle);
         }
         if (!is_writable($file)) {
-            throw new \Exception('Unable to open output file for writing');
+            throw new RuntimeException('Unable to open output file for writing');
         }
 
-        $domxml = new \DOMDocument('1.0');
+        $domxml = new DOMDocument('1.0');
         $domxml->preserveWhiteSpace = false;
         $domxml->formatOutput = true;
         $domxml->loadXML($xml->asXML());
         $domxml->save($file);
     }
 
-
-    /**
-     * Detemrine the path to the translations folder
-     *
-     * @return string
-     */
-    private function getTranslationsPath()
+    private function getTranslationsPath(): string
     {
         if(Kernel::MAJOR_VERSION >= 4) {
             return $this->projectDir . '/translations';
@@ -368,10 +357,44 @@ class TranslationExportCommand extends Command
     /**
      * Load the content for the translation file from the DB
      */
-    private function loadTextFromDB()
+    private function loadTextFromDB(): array
     {
         return $this->em->getRepository('DoctrineFileMakerDriverBundle:WebContent')
             ->findAll();
     }
 
+    private function clearCache(OutputInterface $output, Application $application): void
+    {
+        $command = $application->find('cache:clear');
+        $arguments = array(
+            'command' => 'cache:clear',
+            '--no-warmup' => true,
+        );
+        $input = new ArrayInput($arguments);
+
+        try {
+            if ($command->run($input, $output) === 0) {
+                $output->writeln('<info>Cache cleared</info>');
+            }
+        } catch (Exception $e) {
+            $output->writeln('<error>Unable to clear cache</error>');
+        }
+    }
+
+    private function warmCache(OutputInterface $output, Application $application): void
+    {
+        $command = $application->find('cache:warm');
+        $arguments = array(
+            'command' => 'cache:warm'
+        );
+        $input = new ArrayInput($arguments);
+
+        try {
+            if ($command->run($input, $output) === 0) {
+                $output->writeln('<info>Cache warmed</info>');
+            }
+        } catch (Exception $e) {
+            $output->writeln('<error>Unable to warm cache</error>');
+        }
+    }
 }
