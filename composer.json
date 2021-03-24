@@ -21,7 +21,7 @@
         "symfony/dependency-injection": "^3.4|^4.2|^5.0",
         "twig/twig": "^1.38||^2.7||^3.0",
         "symfony/http-kernel": "^3.4|^4.2|^5.0",
-        "symfony/framework-bundle": "^5.0"
+        "symfony/framework-bundle": "^3.4|^4.2|^5.0"
     },
     "suggest": {
         "matatirosoln/doctrine-filemaker-driver": "Use FileMaker through CWP as your backend database",
