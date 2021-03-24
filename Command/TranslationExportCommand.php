@@ -62,6 +62,12 @@ class TranslationExportCommand extends Command
                 InputOption::VALUE_NONE,
                 'Skip clearing the cache; only use this if you plan to clear it '
                 . 'manually after running other tasks.'
+            )
+            ->addOption(
+                'icu',
+                null,
+                InputOption::VALUE_OPTIONAL,
+                'Translations are in intl-icu format.'
             );
     }
 
@@ -70,9 +76,10 @@ class TranslationExportCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
+        $icu = filter_var($input->getOption('icu'), FILTER_VALIDATE_BOOLEAN);
         // load the content of the WebContent table from FM
         $text = $this->loadTextFromDB();
-        $this->updateFile($text, $output, 'messages');
+        $this->updateFile($text, $output, 'messages', $icu);
 
         // now update the javascript versions
         $this->processJavascript($output);
@@ -138,12 +145,12 @@ class TranslationExportCommand extends Command
      *
      * @throws RuntimeException
      */
-    private function updateFile($text, OutputInterface $output, string $type): void
+    private function updateFile($text, OutputInterface $output, string $type, bool $icu): void
     {
         // perform the conversion from the messages strings file
         $en = $this->convertFromDB($text);
 
-        $this->writeFile($en, $type, 'en');
+        $this->writeFile($en, $type, 'en', $icu);
         $output->writeln('<info>en messages translation updated</info>');
 
         // now update the other languages
@@ -327,9 +334,10 @@ class TranslationExportCommand extends Command
      *
      * @throws RuntimeException
      */
-    private function writeFile(SimpleXMLElement $xml, $type, $locale): void
+    private function writeFile(SimpleXMLElement $xml, $type, $locale, bool $icu): void
     {
-        $file = $this->getTranslationsPath().DIRECTORY_SEPARATOR."{$type}.{$locale}.xlf";
+        $icuStr = $icu ? '+intl-icu' : '';
+        $file = $this->getTranslationsPath().DIRECTORY_SEPARATOR."{$type}{$icuStr}.{$locale}.xlf";
         if (!file_exists($file)) {
             $handle = fopen($file, 'wb');
             fclose($handle);
