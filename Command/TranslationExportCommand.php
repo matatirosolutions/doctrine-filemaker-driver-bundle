@@ -33,6 +33,9 @@ class TranslationExportCommand extends Command
     /** @var ParameterBagInterface */
     private $params;
 
+    /** @var bool */
+    private $phpAPI;
+
     /**
      * TranslationExportCommand constructor.
      * @param EntityManagerInterface $em
@@ -46,6 +49,7 @@ class TranslationExportCommand extends Command
         $this->em = $em;
         $this->params = $params;
         $this->projectDir = $projectDir;
+        $this->phpAPI = $em->getConnection()->getDriver() instanceof \MSDev\DoctrineFileMakerDriver\FMDriver;
     }
 
 
@@ -237,6 +241,10 @@ class TranslationExportCommand extends Command
 
     private function cleanContent($string)
     {
+        if($this->phpAPI) {
+            return trim($string);
+        }
+
         return trim(
             htmlspecialchars($string, ENT_QUOTES)
         );

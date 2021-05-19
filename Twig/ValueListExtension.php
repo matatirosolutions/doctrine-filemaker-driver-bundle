@@ -15,24 +15,15 @@ use Twig\TwigFunction;
 
 class ValueListExtension extends AbstractExtension
 {
-    /**
-     * @var ValuelistManager
-     */
+    /** @var ValuelistManager */
     protected $vlm;
 
-    /**
-     * Constructor
-     *
-     * @param ValuelistManager $vlm
-     */
     public function __construct(ValuelistManager $vlm)
     {
         $this->vlm = $vlm;
     }
 
-    /**
-     * @see Twig_Extension::getFunctions()
-     */
+    /** @inheritdoc */
     public function getFunctions()
     {
         return array(

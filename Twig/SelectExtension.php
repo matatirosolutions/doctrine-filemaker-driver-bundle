@@ -91,7 +91,7 @@ class SelectExtension extends AbstractExtension
         );
     }
 
-    public function renderCombo(TwigFunctionEnvironment $environment, $type, $data, $opts = array())
+    public function renderCombo(Environment $environment, $type, $data, $opts = array())
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/combobox.html.twig",
@@ -107,7 +107,7 @@ class SelectExtension extends AbstractExtension
         );
     }
 
-    public function renderYesNoNa(TwigFunctionEnvironment $environment, $opts = array())
+    public function renderYesNoNa(Environment $environment, $opts = array())
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/yes-no-na.html.twig",
@@ -122,7 +122,7 @@ class SelectExtension extends AbstractExtension
         );
     }
 
-    public function renderRAG(TwigFunctionEnvironment $environment, $opts = array())
+    public function renderRAG(Environment $environment, $opts = array())
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/rag.html.twig",

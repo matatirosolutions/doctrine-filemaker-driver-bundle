@@ -20,7 +20,7 @@ class TaxonomyExtension extends AbstractExtension
      */
     protected $vlm;
 
-    /** @var \Twig_Environment */
+    /** @var Environment */
     protected $twig;
 
     /**
@@ -57,17 +57,14 @@ class TaxonomyExtension extends AbstractExtension
             ),
         );
     }
-
-    /**
-     * @see Twig_ExtensionInterface::getName()
-     */
+    /** @inheritdoc */
     public function getName()
     {
         return 'dfmdb_taxonomy_selector';
     }
 
     /**
-     * @param \Twig_Environment $environment
+     * @param Environment $environment
      * @param string $type          Either
      * @param string|array $list
      * @param array $options
@@ -79,7 +76,7 @@ class TaxonomyExtension extends AbstractExtension
         return $this->renderTemplate('@DoctrineFileMakerDriver/taxonomy.html.twig', $type, $list, $options, 'checkbox');
     }
 
-    public function taxonomyRadioButtons(\Twig_Environment $environment, string $type, $list, array $options)
+    public function taxonomyRadioButtons(Environment $environment, string $type, $list, array $options)
     {
         $this->twig = $environment;
         return $this->renderTemplate('@DoctrineFileMakerDriver/taxonomy.html.twig', $type, $list, $options, 'radio');
