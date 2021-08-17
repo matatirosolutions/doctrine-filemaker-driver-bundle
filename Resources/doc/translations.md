@@ -13,6 +13,16 @@ doctrine_file_maker_driver:
    javascript_translations: true
 ```
 
+### Alternatively create your own entity
+
+If you already have content stored in FileMaker and wish to create your own entity to export content
+ 1. Create an entity which implements `MSDev\DoctrineFileMakerDriverBundle\Entity\WebContentInterface`
+ 2. Configure the bundle to use your new entity
+```yaml
+doctrine_file_maker_driver:
+   content_class: App:MyContentEntity
+```
+
 ## Command ##
 
 There is a command which is provided to export the translations from FileMaker into the correct location for Symfony to access them. Use `bin/console translation:export`.

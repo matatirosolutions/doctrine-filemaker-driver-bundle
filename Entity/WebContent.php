@@ -3,7 +3,7 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
-use AppBundle\Entity\Thing;
+
 
 /**
  * WebContent
@@ -11,10 +11,10 @@ use AppBundle\Entity\Thing;
  * @ORM\Table(name="WebContent")
  * @ORM\Entity(repositoryClass="MSDev\DoctrineFileMakerDriverBundle\Repository\WebContentRepository")
  */
-class WebContent
+class WebContent implements WebContentInterface
 {
     /**
-     * @var int
+     * @var string
      * @ORM\Column(name="ID", type="string")
      * @ORM\Id
      * @ORM\GeneratedValue(strategy="CUSTOM")
@@ -24,27 +24,17 @@ class WebContent
 
     /**
      * @var string
-     *
      * @ORM\Column(name="Content", type="text")
      */
     private $content;
 
-    /**
-     * Get id
-     *
-     * @return int
-     */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
 
-    /**
-     * Get content
-     *
-     * @return string
-     */
-    public function getContent() {
+    public function getContent(): string
+    {
         return $this->content;
     }
 }

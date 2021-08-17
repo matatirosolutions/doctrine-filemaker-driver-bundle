@@ -35,6 +35,7 @@ class DoctrineFileMakerDriverExtension extends Extension implements PrependExten
         $sd->addMethodCall( 'setValuelistLayout', array( $processedConfig[ 'valuelist_layout' ] ) );
 
         $container->setParameter( 'doctrine_file_maker_driver.javascript_translations', $processedConfig[ 'javascript_translations' ] );
+        $container->setParameter( 'doctrine_file_maker_driver.content_class', $processedConfig[ 'content_class' ] );
     }
 
     public function prepend(ContainerBuilder $container)

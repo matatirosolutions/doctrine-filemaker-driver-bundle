@@ -375,7 +375,8 @@ class TranslationExportCommand extends Command
      */
     private function loadTextFromDB(): array
     {
-        return $this->em->getRepository('DoctrineFileMakerDriverBundle:WebContent')
+        $contentClass = $this->params->get('doctrine_file_maker_driver.content_class');
+        return $this->em->getRepository($contentClass)
             ->findAll();
     }
 

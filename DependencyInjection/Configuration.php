@@ -34,6 +34,9 @@ class Configuration implements ConfigurationInterface
                 ->scalarNode('javascript_translations')
                     ->defaultValue(false)
                     ->end()
+                ->variableNode('content_class')
+                    ->defaultValue('DoctrineFileMakerDriverBundle:WebContent')
+                    ->end()
             ->end();
 
         return $treeBuilder;
