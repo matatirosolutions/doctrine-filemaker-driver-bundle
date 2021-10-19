@@ -3,7 +3,7 @@
     {% set dstr = dstr ~ ' data-' ~ k ~ '="' ~ d ~'"' %}
 {% endfor %}
 
-<select name="{{ name }}" id="{{ id }}" class="{{ class }}"{{ dstr|raw }}{% if disabled %} disabled{% endif %}{% if required %} required{% endif %}>
+<select name="{{ name }}" id="{{ id }}" class="{{ class }}"{{ dstr|raw }}{% if disabled %} disabled{% endif %}{% if required %} required{% endif %}{% if multiple %} multiple{% endif %}>
     <option disabled selected value=""></option>
     <optgroup label="">
         {% for term in terms %}

@@ -2,8 +2,13 @@
 
 namespace MSDev\DoctrineFileMakerDriverBundle\Twig;
 
+use MSDev\DoctrineFileMakerDriverBundle\Exception\LayoutNotDefined;
+use MSDev\DoctrineFileMakerDriverBundle\Exception\ValueListNotFound;
 use MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Error\RuntimeError;
+use Twig\Error\SyntaxError;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -28,7 +33,7 @@ class SelectExtension extends AbstractExtension
     /**
      * @see Twig_Extension::getFunctions()
      */
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return array(
             new TwigFunction(
@@ -44,6 +49,7 @@ class SelectExtension extends AbstractExtension
                 array($this, 'renderCombo'),
                 array(
                     'is_safe' => array('html'),
+                    'needs_environment' => true,
                 )
             ),
             new TwigFunction(
@@ -51,6 +57,7 @@ class SelectExtension extends AbstractExtension
                 array($this, 'renderYesNoNa'),
                 array(
                     'is_safe' => array('html'),
+                    'needs_environment' => true,
                 )
             ),
             new TwigFunction(
@@ -58,6 +65,7 @@ class SelectExtension extends AbstractExtension
                 array($this, 'renderRAG'),
                 array(
                     'is_safe' => array('html'),
+                    'needs_environment' => true,
                 )
             ),
         );
@@ -66,81 +74,111 @@ class SelectExtension extends AbstractExtension
     /**
      * @see Twig_ExtensionInterface::getName()
      */
-    public function getName()
+    public function getName(): string
     {
         return 'dfmdb_render_select';
     }
 
+
     /**
-     *
+     * @throws SyntaxError
+     * @throws LayoutNotDefined
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws ValueListNotFound
      */
-    public function renderSelect(Environment $environment, $type, $data, $opts = array())
+    public function renderSelect(Environment $environment, $type, $data, $opts = array()): string
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/select.html.twig",
             array(
                 'terms' => $this->getTerms($type, $data),
-                'class' => isset($opts['class']) ? $opts['class'] : 'selectpicker',
-                'id' => isset($opts['id']) ? $opts['id'] : (isset($opts['name']) ? $opts['name'] : ''),
-                'name' => isset($opts['name']) ? $opts['name'] : '',
-                'selected' => isset($opts['selected']) ? $opts['selected'] : array(),
-                'disabled' => isset($opts['disabled']) ? $opts['disabled'] : false,
-                'required' => isset($opts['required']) ? $opts['required'] : false,
+                'class' => $opts['class'] ?? 'selectpicker',
+                'id' => $opts['id'] ?? ($opts['name'] ?? ''),
+                'name' => $opts['name'] ?? '',
+                'selected' => $opts['selected'] ?? array(),
+                'disabled' => $opts['disabled'] ?? false,
+                'required' => $opts['required'] ?? false,
+                'multiple' => $opts['multiple'] ?? false,
                 'data' => $this->setSelectDataAttributes($data, $opts),
             )
         );
     }
 
-    public function renderCombo(Environment $environment, $type, $data, $opts = array())
+    /**
+     * @throws SyntaxError
+     * @throws LayoutNotDefined
+     * @throws RuntimeError
+     * @throws LoaderError
+     * @throws ValueListNotFound
+     */
+    public function renderCombo(Environment $environment, $type, $data, $opts = array()): string
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/combobox.html.twig",
             array(
                 'terms' => $this->getTerms($type, $data),
-                'class' => isset($opts['class']) ? $opts['class'] : '',
-                'id' => isset($opts['id']) ? $opts['id'] : (isset($opts['name']) ? $opts['name'] : ''),
-                'name' => isset($opts['name']) ? $opts['name'] : '',
-                'selected' => isset($opts['selected']) ? $opts['selected'] : array(),
-                'disabled' => isset($opts['disabled']) ? $opts['disabled'] : false,
+                'class' => $opts['class'] ?? '',
+                'id' => $opts['id'] ?? ($opts['name'] ?? ''),
+                'name' => $opts['name'] ?? '',
+                'selected' => $opts['selected'] ?? array(),
+                'disabled' => $opts['disabled'] ?? false,
+                'required' => $opts['required'] ?? false,
+                'multiple' => $opts['multiple'] ?? false,
                 'data' => $this->setSelectDataAttributes($data, $opts),
             )
         );
     }
 
-    public function renderYesNoNa(Environment $environment, $opts = array())
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function renderYesNoNa(Environment $environment, $opts = array()): string
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/yes-no-na.html.twig",
             array(
-                'class' => isset($opts['class']) ? $opts['class'] : '',
-                'id' => isset($opts['id']) ? $opts['id'] : (isset($opts['name']) ? $opts['name'] : ''),
-                'name' => isset($opts['name']) ? $opts['name'] : '',
-                'selected' => isset($opts['selected']) ? $opts['selected'] : array(),
-                'na' => isset($opts['show-na']) ? $opts['show-na'] : true,
-                'disabled' => isset($opts['disabled']) ? $opts['disabled'] : false,
+                'class' => $opts['class'] ?? '',
+                'id' => $opts['id'] ?? ($opts['name'] ?? ''),
+                'name' => $opts['name'] ?? '',
+                'selected' => $opts['selected'] ?? array(),
+                'na' => $opts['show-na'] ?? true,
+                'disabled' => $opts['disabled'] ?? false,
             )
         );
     }
 
-    public function renderRAG(Environment $environment, $opts = array())
+    /**
+     * @throws SyntaxError
+     * @throws RuntimeError
+     * @throws LoaderError
+     */
+    public function renderRAG(Environment $environment, $opts = array()): string
     {
         return $environment->render(
             "@DoctrineFileMakerDriver/rag.html.twig",
             array(
-                'class' => isset($opts['class']) ? $opts['class'] : '',
-                'id' => isset($opts['id']) ? $opts['id'] : (isset($opts['name']) ? $opts['name'] : ''),
-                'name' => isset($opts['name']) ? $opts['name'] : '',
-                'selected' => isset($opts['selected']) ? $opts['selected'] : array(),
-                'disabled' => isset($opts['disabled']) ? $opts['disabled'] : false,
-                'red' => isset($opts['red']) ? $opts['red'] : 'Red',
-                'amber' => isset($opts['amber']) ? $opts['amber'] : 'Amber',
-                'green' => isset($opts['green']) ? $opts['green'] : 'Green',
+                'class' => $opts['class'] ?? '',
+                'id' => $opts['id'] ?? ($opts['name'] ?? ''),
+                'name' => $opts['name'] ?? '',
+                'selected' => $opts['selected'] ?? array(),
+                'disabled' => $opts['disabled'] ?? false,
+                'red' => $opts['red'] ?? 'Red',
+                'amber' => $opts['amber'] ?? 'Amber',
+                'green' => $opts['green'] ?? 'Green',
             )
         );
     }
 
 
-    private function getTerms($type, $data) {
+    /**
+     * @throws LayoutNotDefined
+     * @throws ValueListNotFound
+     */
+    private function getTerms($type, $data): array
+    {
         switch($type) {
             case 'valuelist':
                 return $this->vlm->getValuelist($data);
@@ -151,15 +189,15 @@ class SelectExtension extends AbstractExtension
         }
     }
 
-    private function setSelectDataAttributes($data, array $opts)
+    private function setSelectDataAttributes($data, array $opts): array
     {
         $attr = [
             'taxonomy' => !is_array($data) ? $data : '',
-            'live-search' => isset($opts['search']) ? $opts['search'] : 'true',
+            'live-search' => $opts['search'] ?? 'true',
             'hide-disabled' => 'true',
-            'title' => isset($opts['title']) ? $opts['title'] : 'Select',
+            'title' => $opts['title'] ?? 'Select',
             'clear-button' => true,
-            'type' => isset($opts['type']) ? $opts['type'] : 'entry',
+            'type' => $opts['type'] ?? 'entry',
         ];
         if(!empty($opts['data'])) {
             $attr = array_merge($attr, $opts['data']);
@@ -167,4 +205,5 @@ class SelectExtension extends AbstractExtension
 
         return $attr;
     }
+
 }
