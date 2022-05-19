@@ -107,14 +107,15 @@ class ValuelistManager
 
     private function loadCWPValueLists(): void
     {
+        $lists = [];
         $fm = $this->connection->getConnection();
         $layout = $fm->getLayout($this->layout);
         if ($layout instanceof \FileMaker_Error) {
+            $this->session->set('valuelists', $lists);
             return;
         }
 
         $vls = $layout->getValueListsTwoFields();
-        $lists = [];
         foreach ($vls as $name => $values) {
             $list = [];
             foreach ($values as $title => $key) {
