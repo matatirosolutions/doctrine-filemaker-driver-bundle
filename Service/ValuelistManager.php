@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: SteveWinter
- * Date: 03/07/2017
- * Time: 14:30
- */
 
 namespace MSDev\DoctrineFileMakerDriverBundle\Service;
 
@@ -24,6 +18,9 @@ class ValuelistManager
     /** @var SessionInterface */
     private $session;
 
+    /** @var RequestStack */
+    private $requestStack;
+
     /** @var string */
     private $layout = '';
 
@@ -31,7 +28,7 @@ class ValuelistManager
     public function __construct(Connection $connection, RequestStack $requestStack)
     {
         $this->connection = $connection->getWrappedConnection();
-        $this->session = $requestStack->getSession();
+        $this->requestStack = $requestStack;
     }
 
     public function setValuelistLayout($layout): void
@@ -49,6 +46,7 @@ class ValuelistManager
      */
     public function getValuelist(string $list): array
     {
+        $this->session = $this->requestStack->getSession();
         if(empty($this->session->get('valuelists'))) {
             $this->loadValuelists();
         }
@@ -66,6 +64,7 @@ class ValuelistManager
      */
     public function loadValuelists(): void
     {
+        $this->session = $this->requestStack->getSession();
         if(empty($this->layout)) {
             throw new LayoutNotDefined('No valuelist layout has been set in config.yml');
         }
@@ -88,6 +87,7 @@ class ValuelistManager
      */
     public function getTermTitleByIdFromList(string $termId, string $list): string
     {
+        $this->session = $this->requestStack->getSession();
         if(empty($this->session->get('valuelists'))) {
             $this->loadValuelists();
         }
@@ -150,4 +150,5 @@ class ValuelistManager
 
         $this->session->set('valuelists', $lists);
     }
+
 }
