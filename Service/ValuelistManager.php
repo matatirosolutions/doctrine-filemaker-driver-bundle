@@ -12,6 +12,7 @@ use Doctrine\DBAL\Connection;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\LayoutNotDefined;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\TermNotFound;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\ValueListNotFound;
+use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
 
 
@@ -27,10 +28,10 @@ class ValuelistManager
     private $layout = '';
 
 
-    public function __construct(Connection $connection, SessionInterface $session)
+    public function __construct(Connection $connection, RequestStack $requestStack)
     {
         $this->connection = $connection->getWrappedConnection();
-        $this->session = $session;
+        $this->session = $requestStack->getSession();
     }
 
     public function setValuelistLayout($layout): void

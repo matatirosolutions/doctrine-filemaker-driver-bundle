@@ -13,15 +13,15 @@
     "license" : "MIT",
     "_comment": "",
     "require": {
-    	"php": ">=7.1.0",
+    	"php": ">=7.2.0",
         "ext-dom": "*",
         "ext-simplexml": "*",
         "doctrine/orm": "2.*",
-        "symfony/console": "^3.4|^4.2|^5.0|^6.0",
-        "symfony/dependency-injection": "^3.4|^4.2|^5.0|^6.0",
+        "symfony/console": "^5.4|^6.0",
+        "symfony/dependency-injection": "^5.4|^6.0",
         "twig/twig": "^1.38||^2.7||^3.0",
-        "symfony/http-kernel": "^3.4|^4.2|^5.0|^6.0",
-        "symfony/framework-bundle": "^3.4|^4.2|^5.0|^6.0"
+        "symfony/http-kernel": "^5.4|^6.0",
+        "symfony/framework-bundle": "^5.4|^6.0"
     },
     "suggest": {
         "matatirosoln/doctrine-filemaker-driver": "Use FileMaker through CWP as your backend database",
@@ -30,6 +30,11 @@
     "autoload": {
         "psr-4": {
             "MSDev\\DoctrineFileMakerDriverBundle\\": ""
+        }
+    },
+    "config": {
+        "allow-plugins": {
+            "ocramius/package-versions": true
         }
     }
 }
