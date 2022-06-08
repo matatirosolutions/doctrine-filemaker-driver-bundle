@@ -40,7 +40,7 @@ services:
         class: MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager
         arguments:
             - '@doctrine.dbal.default_connection'
-            - '@session'
+            - '@request_stack'
         public: true
     MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager: '@fm.valuelist_service'
 
