@@ -8,6 +8,7 @@
 
 namespace MSDev\DoctrineFileMakerDriverBundle\DependencyInjection;
 
+use MSDev\DoctrineFileMakerDriverBundle\Entity\WebContent;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
 
@@ -35,7 +36,7 @@ class Configuration implements ConfigurationInterface
                     ->defaultValue(false)
                     ->end()
                 ->variableNode('content_class')
-                    ->defaultValue('DoctrineFileMakerDriverBundle:WebContent')
+                    ->defaultValue(WebContent::class)
                     ->end()
             ->end();
 
