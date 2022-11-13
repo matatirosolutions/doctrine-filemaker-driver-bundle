@@ -17,6 +17,7 @@
         "ext-dom": "*",
         "ext-simplexml": "*",
         "doctrine/orm": "2.*",
+        "doctrine/dbal": "2.*",
         "symfony/console": "^5.4|^6.0",
         "symfony/dependency-injection": "^5.4|^6.0",
         "twig/twig": "^1.38||^2.7||^3.0",

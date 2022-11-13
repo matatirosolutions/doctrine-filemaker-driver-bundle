@@ -1,8 +1,8 @@
 <?php
 
-
 namespace MSDev\DoctrineFileMakerDriverBundle\Types;
 
+use DateTime;
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
@@ -15,16 +15,20 @@ class FMDateType extends Type
 {
     protected $name = 'fmdate';
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $this->name;
     }
 
+    /**
+     * @return mixed
+     * @throws ConversionException
+     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if (is_null($value)) {
@@ -35,20 +39,20 @@ class FMDateType extends Type
             return date('m/d/Y', $value);
         }
 
-        if($value instanceof \DateTime) {
+        if($value instanceof DateTime) {
             return $value->format('m/d/Y');
         }
 
         throw ConversionException::conversionFailed(var_export($value, true), $this->name);
     }
 
-    public function convertToPHPValue($value, AbstractPlatform $platform)
+    public function convertToPHPValue($value, AbstractPlatform $platform): ?DateTime
     {
         if (empty($value)) {
             return null;
         }
 
-        $date = \DateTime::createFromFormat('m/d/Y', $value);
+        $date = DateTime::createFromFormat('m/d/Y', $value);
         if($date && $date->format('m/d/Y') === $value) {
             return $date;
         }
@@ -56,11 +60,9 @@ class FMDateType extends Type
         throw ConversionException::conversionFailed(var_export($value, true), $this->name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
-        return true;
+        return false;
     }
+
 }

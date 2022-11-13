@@ -19,19 +19,18 @@ class TypeRegistry
         $this->registerType('array', 'array', FMArrayType::class);
     }
 
-    private function registerType($databaseName, $doctrineName, $className, $compatibleDriverMask = null)
+    private function registerType($databaseName, $doctrineName, $className, $compatibleDriverMask = null): void
     {
         $this->dbToDoctrine[$databaseName] = [$doctrineName, $compatibleDriverMask];
         $this->doctrineToClass[$doctrineName] = $className;
 
-        return $this;
     }
 
-    public function getDatabaseMapping($connectionDriver)
+    public function getDatabaseMapping($connectionDriver): array
     {
         $result = [];
         foreach ($this->dbToDoctrine as $databaseName => $row) {
-            list($doctrineName, $compatibleDriverMask) = $row;
+            [$doctrineName, $compatibleDriverMask] = $row;
             if (is_null($compatibleDriverMask) || preg_match($compatibleDriverMask, $connectionDriver)) {
                 $result[$databaseName] = $doctrineName;
             }
@@ -39,8 +38,9 @@ class TypeRegistry
         return $result;
     }
 
-    public function getDoctrineMapping()
+    public function getDoctrineMapping(): array
     {
         return $this->doctrineToClass;
     }
+
 }

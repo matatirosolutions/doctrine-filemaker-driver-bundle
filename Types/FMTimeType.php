@@ -1,30 +1,30 @@
 <?php
 
-
 namespace MSDev\DoctrineFileMakerDriverBundle\Types;
 
 use Doctrine\DBAL\Types\Type;
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\ConversionException;
 
-/**
- *
- *
- */
+
 class FMTimeType extends Type
 {
     protected $name = 'fmtime';
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $this->name;
     }
 
+    /**
+     * @return mixed
+     * @throws ConversionException
+     */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
         if (is_null($value)) {
@@ -43,6 +43,10 @@ class FMTimeType extends Type
         throw ConversionException::conversionFailed(var_export($value, true), $this->name);
     }
 
+    /**
+     * @return mixed
+     * @throws ConversionException
+     */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
         if (empty($value)) {
@@ -57,11 +61,4 @@ class FMTimeType extends Type
         throw ConversionException::conversionFailed(var_export($value, true), $this->name);
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
-    {
-        return true;
-    }
 }

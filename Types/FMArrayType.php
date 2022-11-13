@@ -1,31 +1,24 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: stevewinter
- * Date: 24/08/2017
- * Time: 17:00
- */
 
 namespace MSDev\DoctrineFileMakerDriverBundle\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
+use Doctrine\DBAL\Types\ConversionException;
 use Doctrine\DBAL\Types\Type;
+use Doctrine\DBAL\Types\Types;
 
 /**
  *
  */
 class FMArrayType extends Type
 {
-    /**
-     * {@inheritdoc}
-     */
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
-        return $platform->getClobTypeDeclarationSQL($fieldDeclaration);
+        return $platform->getClobTypeDeclarationSQL($column);
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
@@ -33,7 +26,8 @@ class FMArrayType extends Type
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
+     * @throws ConversionException
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
@@ -43,28 +37,23 @@ class FMArrayType extends Type
 
         $value = (is_resource($value)) ? stream_get_contents($value) : $value;
         $val = unserialize(
-            base64_decode($value)
+            base64_decode($value),
+            ['allowed_classes' => true]
         );
 
-        if ($val === false && $value != 'b:0;') {
+        if ($val === false && $value !== 'b:0;') {
             throw ConversionException::conversionFailed($value, $this->getName());
         }
 
         return $val;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function getName()
+    public function getName(): string
     {
-        return Type::TARRAY;
+        return Types::ARRAY;
     }
 
-    /**
-     * {@inheritdoc}
-     */
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
         return true;
     }

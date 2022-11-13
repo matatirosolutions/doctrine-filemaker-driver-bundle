@@ -20,7 +20,7 @@ If you already have content stored in FileMaker and wish to create your own enti
  2. Configure the bundle to use your new entity
 ```yaml
 doctrine_file_maker_driver:
-   content_class: App:MyContentEntity
+   content_class: \App\Entity\CustomContentEntity
 ```
 
 ## Command ##

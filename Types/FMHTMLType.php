@@ -1,35 +1,27 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: stevewinter
- * Date: 24/08/2017
- * Time: 17:00
- */
 
 namespace MSDev\DoctrineFileMakerDriverBundle\Types;
 
 use Doctrine\DBAL\Platforms\AbstractPlatform;
 use Doctrine\DBAL\Types\Type;
 
-/**
- *
- */
+
 class FMHTMLType extends Type
 {
     protected $name = 'fmhtml';
 
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
 
-    public function getSQLDeclaration(array $fieldDeclaration, AbstractPlatform $platform)
+    public function getSQLDeclaration(array $column, AbstractPlatform $platform): string
     {
         return $this->name;
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
     public function convertToDatabaseValue($value, AbstractPlatform $platform)
     {
@@ -37,7 +29,7 @@ class FMHTMLType extends Type
     }
 
     /**
-     * {@inheritdoc}
+     * @return mixed
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
@@ -47,12 +39,10 @@ class FMHTMLType extends Type
 
         return html_entity_decode($value);
     }
-    
-    /**
-     * {@inheritdoc}
-     */
-    public function requiresSQLCommentHint(AbstractPlatform $platform)
+
+    public function requiresSQLCommentHint(AbstractPlatform $platform): bool
     {
-        return true;
+        return false;
     }
+
 }
