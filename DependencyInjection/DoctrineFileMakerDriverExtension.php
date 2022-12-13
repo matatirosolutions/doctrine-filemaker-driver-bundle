@@ -1,13 +1,8 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: SteveWinter
- * Date: 10/04/2017
- * Time: 15:30
- */
 
 namespace MSDev\DoctrineFileMakerDriverBundle\DependencyInjection;
 
+use Exception;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
@@ -19,7 +14,10 @@ use MSDev\DoctrineFileMakerDriverBundle\Types\TypeRegistry;
 class DoctrineFileMakerDriverExtension extends Extension implements PrependExtensionInterface
 {
 
-    public function load(array $configs, ContainerBuilder $container)
+    /**
+     * @throws Exception
+     */
+    public function load(array $configs, ContainerBuilder $container): void
     {
         $configuration = new Configuration();
         $processedConfig = $this->processConfiguration( $configuration, $configs );
@@ -36,9 +34,14 @@ class DoctrineFileMakerDriverExtension extends Extension implements PrependExten
 
         $container->setParameter( 'doctrine_file_maker_driver.javascript_translations', $processedConfig[ 'javascript_translations' ] );
         $container->setParameter( 'doctrine_file_maker_driver.content_class', $processedConfig[ 'content_class' ] );
+
+        $container->setParameter( 'doctrine_file_maker_driver.admin_server', $processedConfig[ 'admin_server' ] );
+        $container->setParameter( 'doctrine_file_maker_driver.admin_port', $processedConfig[ 'admin_port' ] );
+        $container->setParameter( 'doctrine_file_maker_driver.admin_username', $processedConfig[ 'admin_username' ] );
+        $container->setParameter( 'doctrine_file_maker_driver.admin_password', $processedConfig[ 'admin_password' ] );
     }
 
-    public function prepend(ContainerBuilder $container)
+    public function prepend(ContainerBuilder $container): void
     {
         $bundles = $container->getParameter('kernel.bundles');
         if (!isset($bundles['DoctrineBundle'])) {
@@ -53,7 +56,7 @@ class DoctrineFileMakerDriverExtension extends Extension implements PrependExten
         $container->prependExtensionConfig('doctrine', $config);
     }
 
-    private function determineDriver()
+    private function determineDriver(): string
     {
         $isCWP = $this->isCWP();
         $isDAPI = $this->isDAPI();
@@ -72,13 +75,14 @@ class DoctrineFileMakerDriverExtension extends Extension implements PrependExten
         return 'services.yml';
     }
 
-    private function isCWP()
+    private function isCWP(): bool
     {
         return class_exists('\MSDev\DoctrineFileMakerDriver\FMPlatform');
     }
 
-    private function isDAPI()
+    private function isDAPI(): bool
     {
         return class_exists('\MSDev\DoctrineFMDataAPIDriver\FMPlatform');
     }
+
 }

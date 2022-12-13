@@ -64,3 +64,38 @@ services:
             - '%kernel.project_dir%'
         tags:
             - { name: console.command }
+
+    fm.dapi_admin_service:
+        class: MSDev\DoctrineFileMakerDriverBundle\Service\DataApiAdminService
+        arguments:
+            - '@parameter_bag'
+        public: true
+    MSDev\DoctrineFileMakerDriverBundle\Service\DataApiAdminService: '@fm.dapi_admin_service'
+
+    fm.dapi_enable:
+        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\EnableCommand
+        arguments:
+            - '@fm.dapi_admin_service'
+        tags:
+            - { name: console.command }
+
+    fm.dapi_disable:
+        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\DisableCommand
+        arguments:
+            - '@fm.dapi_admin_service'
+        tags:
+            - { name: console.command }
+
+    fm.dapi_state:
+        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\StateCommand
+        arguments:
+            - '@fm.dapi_admin_service'
+        tags:
+            - { name: console.command }
+
+    fm.dapi_reset:
+        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\EnableIfDisabledCommand
+        arguments:
+            - '@fm.dapi_admin_service'
+        tags:
+            - { name: console.command }

@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: SteveWinter
- * Date: 10/04/2017
- * Time: 15:30
- */
 
 namespace MSDev\DoctrineFileMakerDriverBundle\DependencyInjection;
 
@@ -38,8 +32,21 @@ class Configuration implements ConfigurationInterface
                 ->variableNode('content_class')
                     ->defaultValue(WebContent::class)
                     ->end()
+                ->variableNode('admin_server')
+                    ->defaultNull()
+                    ->end()
+                ->integerNode('admin_port')
+                    ->defaultValue(443)
+                    ->end()
+                ->variableNode('admin_username')
+                    ->defaultNull()
+                    ->end()
+                ->variableNode('admin_password')
+                    ->defaultNull()
+                    ->end()
             ->end();
 
         return $treeBuilder;
     }
+
 }

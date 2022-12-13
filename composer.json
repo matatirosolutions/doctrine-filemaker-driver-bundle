@@ -14,15 +14,17 @@
     "_comment": "",
     "require": {
     	"php": ">=7.2.0",
+        "ext-json": "*",
         "ext-dom": "*",
         "ext-simplexml": "*",
         "doctrine/orm": "2.*",
         "doctrine/dbal": "2.*",
+        "guzzlehttp/guzzle": "^7.3",
         "symfony/console": "^5.4|^6.0",
         "symfony/dependency-injection": "^5.4|^6.0",
-        "twig/twig": "^1.38||^2.7||^3.0",
         "symfony/http-kernel": "^5.4|^6.0",
-        "symfony/framework-bundle": "^5.4|^6.0"
+        "symfony/framework-bundle": "^5.4|^6.0",
+        "twig/twig": "^1.38||^2.7||^3.0"
     },
     "suggest": {
         "matatirosoln/doctrine-filemaker-driver": "Use FileMaker through CWP as your backend database",
