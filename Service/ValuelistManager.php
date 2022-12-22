@@ -3,11 +3,13 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\Service;
 
 use Doctrine\DBAL\Connection;
+use Exception;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\LayoutNotDefined;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\TermNotFound;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\ValueListNotFound;
 use Symfony\Component\HttpFoundation\RequestStack;
 use Symfony\Component\HttpFoundation\Session\SessionInterface;
+use Throwable;
 
 
 class ValuelistManager
@@ -27,7 +29,11 @@ class ValuelistManager
 
     public function __construct(Connection $connection, RequestStack $requestStack)
     {
-        $this->connection = $connection->getWrappedConnection();
+        try {
+            $this->connection = $connection->getWrappedConnection();
+        } catch (Exception | Throwable $e) {
+            $this->connection = null;
+        }
         $this->requestStack = $requestStack;
     }
 
@@ -67,6 +73,10 @@ class ValuelistManager
         $this->session = $this->requestStack->getSession();
         if(empty($this->layout)) {
             throw new LayoutNotDefined('No valuelist layout has been set in config.yml');
+        }
+
+        if(null === $this->connection) {
+            throw new LayoutNotDefined('There is no connection to FileMaker');
         }
 
         if('MSDev\DoctrineFMDataAPIDriver\FMConnection' === get_class($this->connection)) {
@@ -146,7 +156,7 @@ class ValuelistManager
                 }
                 $lists[$list['name']] = $members;
             }
-        } catch(\Exception $except) {}
+        } catch(Exception $except) {}
 
         $this->session->set('valuelists', $lists);
     }
