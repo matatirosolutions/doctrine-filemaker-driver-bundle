@@ -3,13 +3,16 @@ declare(strict_types=1);
 
 namespace MSDev\DoctrineFileMakerDriverBundle\Service;
 
+use Doctrine\ORM\EntityManagerInterface;
 use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\ClientException;
 use GuzzleHttp\Exception\GuzzleException;
+use MSDev\DoctrineFileMakerDriverBundle\Entity\WebContentInterface;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\AdminAPIException;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\AuthenticationException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Throwable;
 
 
 class DataApiAdminService
@@ -99,6 +102,34 @@ class DataApiAdminService
         } catch(GuzzleException $e) {
             throw new AdminAPIException($e->getMessage(), -1);
         }
+    }
+
+    /**
+     * @throws AdminAPIException
+     */
+    public function connectToDAPI(EntityManagerInterface $entityManager): bool
+    {
+        $contentClass = $this->parameters->get('doctrine_file_maker_driver.content_class');
+        try {
+            if(null === $entityManager->getConnection()->getDatabasePlatform() ||
+                'MSDev\DoctrineFMDataAPIDriver\FMPlatform' !== get_class($entityManager->getConnection()->getDatabasePlatform())
+            ) {
+                throw new AdminAPIException('Incorrect database platform');
+            }
+
+            /** @var WebContentInterface $record */
+            $record = $entityManager->getRepository($contentClass)->findOneBy(['id' => '*']);
+            if(null !== $record->getId()) {
+                return true;
+            }
+        } catch (Exception | Throwable $exception) {
+            if('Doctrine\DBAL\Exception' === get_class($exception)) {
+                throw new AdminAPIException($exception->getPrevious()->getMessage());
+            }
+            throw new AdminAPIException($exception->getMessage());
+        }
+
+        return false;
     }
 
     /**

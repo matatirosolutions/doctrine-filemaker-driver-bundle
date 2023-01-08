@@ -87,15 +87,23 @@ services:
             - { name: console.command }
 
     fm.dapi_state:
-        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\StateCommand
+        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\StatusCommand
         arguments:
             - '@fm.dapi_admin_service'
         tags:
             - { name: console.command }
 
     fm.dapi_reset:
-        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\EnableIfDisabledCommand
+        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\ResetCommand
         arguments:
+            - '@fm.dapi_admin_service'
+        tags:
+            - { name: console.command }
+
+    fm.dapi_verify:
+        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\VerifyCommand
+        arguments:
+            - '@doctrine.orm.entity_manager'
             - '@fm.dapi_admin_service'
         tags:
             - { name: console.command }
