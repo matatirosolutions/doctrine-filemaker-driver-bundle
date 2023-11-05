@@ -5,13 +5,15 @@ namespace MSDev\DoctrineFileMakerDriverBundle\Service;
 
 use Doctrine\ORM\EntityManagerInterface;
 use Exception;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\ClientException;
-use GuzzleHttp\Exception\GuzzleException;
 use MSDev\DoctrineFileMakerDriverBundle\Entity\WebContentInterface;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\AdminAPIException;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\AuthenticationException;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
+use Symfony\Component\HttpClient\HttpClient;
+use Symfony\Contracts\HttpClient\Exception\ClientExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\RedirectionExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\ServerExceptionInterface;
+use Symfony\Contracts\HttpClient\Exception\TransportExceptionInterface;
 use Throwable;
 
 
@@ -64,11 +66,11 @@ class DataApiAdminService
     }
 
     /**
-     * @throws AdminAPIException|AuthenticationException
+     * @throws AdminAPIException|AuthenticationException|TransportExceptionInterface
      */
     public function performFMRequest(string $method, string $uri, array $options): array
     {
-        $client = new Client();
+        $client = HttpClient::create();
         $headers = [
             'headers' => [
                 'Content-Type' => 'application/json',
@@ -79,18 +81,17 @@ class DataApiAdminService
 
         try {
             $response = $client->request($method, $this->baseURI.$uri, array_merge($headers, $options));
-            $content = json_decode($response->getBody()->getContents(), true);
+            $content = json_decode($response->getContent(), true);
 
             return $content['response']['data'] ?? $content['response'];
-        } catch (Exception $e) {
-            /** @var ClientException $e */
-            if(null === $e->getResponse()) {
-                throw new AdminAPIException($e->getMessage(), $e->getCode(), $e);
+        } catch (ClientExceptionInterface $except) {
+            if(null === $except->getResponse()) {
+                throw new AdminAPIException($except->getMessage(), $except->getCode(), $except);
             }
 
-            if(401 === $e->getResponse()->getStatusCode()) {
+            if(401 === $except->getResponse()->getStatusCode()) {
                 if($this->retried) {
-                    throw new AdminAPIException($e->getMessage(), $e->getCode(), $e);
+                    throw new AdminAPIException($except->getMessage(), $except->getCode(), $except);
                 }
 
                 $this->retried = true;
@@ -98,9 +99,9 @@ class DataApiAdminService
                 return $this->performFMRequest($method, $uri, $options);
             }
 
-            throw new AdminAPIException($e->getMessage());
-        } catch(GuzzleException $e) {
-            throw new AdminAPIException($e->getMessage(), -1);
+            throw new AdminAPIException($except->getMessage());
+        } catch (TransportExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface $except) {
+            throw new AdminAPIException($except->getMessage(), -1);
         }
     }
 
@@ -138,7 +139,7 @@ class DataApiAdminService
     private function performLogin(): void
     {
         $this->setBaseURI();
-        $client = new Client();
+        $client = HttpClient::create();
         try {
             $response = $client->request('POST', $this->baseURI . '/user/auth', [
                 'headers' => [
@@ -150,21 +151,20 @@ class DataApiAdminService
                 ]
             ]);
 
-            $content = json_decode($response->getBody()->getContents(), false);
+            $content = json_decode($response->getContent(), false);
             $this->token = $content->response->token;
-        } catch (Exception $e) {
-            /** @var ClientException $e */
+        } catch (ClientExceptionInterface $e) {
             if(null === $e->getResponse()) {
                 throw new AuthenticationException($e->getMessage(), $e->getCode(), $e);
             }
 
             if(404 === $e->getResponse()->getStatusCode()) {
-                throw new AuthenticationException($e->getResponse()->getReasonPhrase(), $e->getResponse()->getStatusCode());
+                throw new AuthenticationException('Not found', $e->getResponse()->getStatusCode());
             }
 
-            $content = json_decode($e->getResponse()->getBody()->getContents(), false);
+            $content = json_decode($e->getResponse()->getContent(), false);
             throw new AuthenticationException($content->messages[0]->message, $content->messages[0]->code);
-        } catch(GuzzleException $e) {
+        } catch(TransportExceptionInterface|RedirectionExceptionInterface|ServerExceptionInterface $e) {
             throw new AuthenticationException($e->getMessage(), -1);
         }
     }
