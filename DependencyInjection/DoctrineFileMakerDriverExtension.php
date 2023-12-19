@@ -27,10 +27,10 @@ class DoctrineFileMakerDriverExtension extends Extension implements PrependExten
         if($services) {
             $loader = new YamlFileLoader($container, new FileLocator(__DIR__ . '/../Resources/config'));
             $loader->load($services);
-        }
 
-        $sd = $container->getDefinition( 'fm.valuelist_service' );
-        $sd->addMethodCall( 'setValuelistLayout', array( $processedConfig[ 'valuelist_layout' ] ) );
+            $sd = $container->getDefinition( 'fm.valuelist_service' );
+            $sd->addMethodCall( 'setValuelistLayout', array( $processedConfig[ 'valuelist_layout' ] ) );
+        }
 
         $container->setParameter( 'doctrine_file_maker_driver.javascript_translations', $processedConfig[ 'javascript_translations' ] );
         $container->setParameter( 'doctrine_file_maker_driver.content_class', $processedConfig[ 'content_class' ] );
