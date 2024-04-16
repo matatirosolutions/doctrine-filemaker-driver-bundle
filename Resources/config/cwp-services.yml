@@ -51,9 +51,9 @@ services:
 
     fm.translation_export:
         class: MSDev\DoctrineFileMakerDriverBundle\Command\TranslationExportCommand
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '@parameter_bag'
-            - '%kernel.project_dir%'
+        autowire: true
+        autoconfigure: true
+        bind:
+            $projectDir: '%kernel.project_dir%'
         tags:
             - { name: console.command }

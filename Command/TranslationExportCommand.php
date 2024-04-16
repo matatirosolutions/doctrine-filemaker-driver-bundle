@@ -3,6 +3,7 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\Command;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use DOMDocument;
 use Exception;
 use RuntimeException;
@@ -42,14 +43,14 @@ class TranslationExportCommand extends Command
      * @param ParameterBagInterface $params
      * @param string $projectDir
      */
-    public function __construct(EntityManagerInterface $em, ParameterBagInterface $params, string $projectDir)
+    public function __construct(ManagerRegistry $em, ParameterBagInterface $params, string $projectDir)
     {
         parent::__construct(null);
 
         $this->em = $em;
         $this->params = $params;
         $this->projectDir = $projectDir;
-        $this->phpAPI = $em->getConnection()->getDriver() instanceof \MSDev\DoctrineFileMakerDriver\FMDriver;
+        $this->phpAPI = $em->getManager()->getConnection()->getDriver() instanceof \MSDev\DoctrineFileMakerDriver\FMDriver;
     }
 
 
@@ -376,7 +377,7 @@ class TranslationExportCommand extends Command
     private function loadTextFromDB(): array
     {
         $contentClass = $this->params->get('doctrine_file_maker_driver.content_class');
-        return $this->em->getRepository($contentClass)
+        return $this->em->getManager($this->params->get('doctrine_file_maker_driver.entity_manager'))->getRepository($contentClass)
             ->findAll();
     }
 
