@@ -34,7 +34,7 @@ class DoctrineFileMakerDriverExtension extends Extension implements PrependExten
 
         $container->setParameter( 'doctrine_file_maker_driver.javascript_translations', $processedConfig[ 'javascript_translations' ] );
         $container->setParameter( 'doctrine_file_maker_driver.content_class', $processedConfig[ 'content_class' ] );
-        $container->setParameter( 'doctrine_file_maker_driver.entity_manager', $processedConfig[ 'entity_manager' ] );
+        $container->setParameter( 'doctrine_file_maker_driver.content_entity_manager', $processedConfig[ 'content_entity_manager' ] );
 
         $container->setParameter( 'doctrine_file_maker_driver.admin_server', $processedConfig[ 'admin_server' ] );
         $container->setParameter( 'doctrine_file_maker_driver.admin_port', $processedConfig[ 'admin_port' ] );

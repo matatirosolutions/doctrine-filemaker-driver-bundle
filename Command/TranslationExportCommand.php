@@ -25,7 +25,7 @@ class TranslationExportCommand extends Command
     /** @var array  */
     private $languages = [];
 
-    /** @var EntityManagerInterface */
+    /** @var ManagerRegistry */
     private $em;
 
     /** @var string */
@@ -37,12 +37,7 @@ class TranslationExportCommand extends Command
     /** @var bool */
     private $phpAPI;
 
-    /**
-     * TranslationExportCommand constructor.
-     * @param EntityManagerInterface $em
-     * @param ParameterBagInterface $params
-     * @param string $projectDir
-     */
+
     public function __construct(ManagerRegistry $em, ParameterBagInterface $params, string $projectDir)
     {
         parent::__construct(null);
@@ -50,7 +45,8 @@ class TranslationExportCommand extends Command
         $this->em = $em;
         $this->params = $params;
         $this->projectDir = $projectDir;
-        $this->phpAPI = $em->getManager()->getConnection()->getDriver() instanceof \MSDev\DoctrineFileMakerDriver\FMDriver;
+        $this->phpAPI = $em->getManager()->getConnection($params->get('doctrine_file_maker_driver.content_entity_manager'))
+                ->getDriver() instanceof \MSDev\DoctrineFileMakerDriver\FMDriver;
     }
 
 
@@ -377,7 +373,7 @@ class TranslationExportCommand extends Command
     private function loadTextFromDB(): array
     {
         $contentClass = $this->params->get('doctrine_file_maker_driver.content_class');
-        return $this->em->getManager($this->params->get('doctrine_file_maker_driver.entity_manager'))->getRepository($contentClass)
+        return $this->em->getManager($this->params->get('doctrine_file_maker_driver.content_entity_manager'))->getRepository($contentClass)
             ->findAll();
     }
 

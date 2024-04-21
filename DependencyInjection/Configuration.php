@@ -32,7 +32,7 @@ class Configuration implements ConfigurationInterface
                 ->variableNode('content_class')
                     ->defaultValue(WebContent::class)
                     ->end()
-                ->variableNode('entity_manager')
+                ->variableNode('content_entity_manager')
                     ->defaultValue('default')
                     ->end()
                 ->variableNode('admin_server')

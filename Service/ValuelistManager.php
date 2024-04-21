@@ -3,6 +3,7 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\Service;
 
 use Doctrine\DBAL\Connection;
+use Doctrine\Persistence\ManagerRegistry;
 use Exception;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\LayoutNotDefined;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\TermNotFound;
@@ -27,10 +28,10 @@ class ValuelistManager
     private $layout = '';
 
 
-    public function __construct(Connection $connection, RequestStack $requestStack)
+    public function __construct(ManagerRegistry $managerRegistry, RequestStack $requestStack)
     {
         try {
-            $this->connection = $connection->getWrappedConnection();
+            $this->connection = $managerRegistry->getManager()->getConnection('default')->getWrappedConnection();
         } catch (Exception | Throwable $e) {
             $this->connection = null;
         }

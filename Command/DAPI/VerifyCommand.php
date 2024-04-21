@@ -4,6 +4,7 @@ declare(strict_types=1);
 namespace MSDev\DoctrineFileMakerDriverBundle\Command\DAPI;
 
 use Doctrine\ORM\EntityManagerInterface;
+use Doctrine\Persistence\ManagerRegistry;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\AdminAPIException;
 use MSDev\DoctrineFileMakerDriverBundle\Exception\AuthenticationException;
 use MSDev\DoctrineFileMakerDriverBundle\Service\DataApiAdminService;
@@ -20,10 +21,10 @@ class VerifyCommand extends Command
     /** @var EntityManagerInterface */
     private $entityManager;
 
-    public function __construct(EntityManagerInterface $entityManager, DataApiAdminService $dapiService)
+    public function __construct(ManagerRegistry $managerRegistry, DataApiAdminService $dapiService)
     {
         parent::__construct();
-        $this->entityManager = $entityManager;
+        $this->entityManager = $managerRegistry->getManager('content');
         $this->dapiService = $dapiService;
     }
 
