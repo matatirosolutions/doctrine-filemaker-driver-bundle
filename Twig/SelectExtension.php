@@ -89,10 +89,20 @@ class SelectExtension extends AbstractExtension
      */
     public function renderSelect(Environment $environment, $type, $data, $opts = array()): string
     {
+        $terms = $this->getTerms($type, $data);
+        if(isset($opts['exclude']) && is_array($opts['exclude'])) {
+            foreach($opts['exclude'] as $exclude) {
+                $key = array_search($exclude, array_column($terms, 'title'));
+                if($key !== false) {
+                    unset($terms[$key]);
+                }
+            }
+        }
+
         return $environment->render(
             "@DoctrineFileMakerDriver/select.html.twig",
             array(
-                'terms' => $this->getTerms($type, $data),
+                'terms' => $terms,
                 'class' => $opts['class'] ?? 'selectpicker',
                 'id' => $opts['id'] ?? ($opts['name'] ?? ''),
                 'name' => $opts['name'] ?? '',
