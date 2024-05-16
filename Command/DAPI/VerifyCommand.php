@@ -11,6 +11,7 @@ use MSDev\DoctrineFileMakerDriverBundle\Service\DataApiAdminService;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBagInterface;
 
 
 class VerifyCommand extends Command
@@ -21,10 +22,10 @@ class VerifyCommand extends Command
     /** @var EntityManagerInterface */
     private $entityManager;
 
-    public function __construct(ManagerRegistry $managerRegistry, DataApiAdminService $dapiService)
+    public function __construct(ManagerRegistry $managerRegistry, ParameterBagInterface $params, DataApiAdminService $dapiService)
     {
         parent::__construct();
-        $this->entityManager = $managerRegistry->getManager('content');
+        $this->entityManager = $managerRegistry->getManager($params->get('doctrine_file_maker_driver.content_entity_manager'));
         $this->dapiService = $dapiService;
     }
 
