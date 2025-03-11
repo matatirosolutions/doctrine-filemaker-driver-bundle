@@ -31,7 +31,7 @@ class ValuelistManager
     public function __construct(ManagerRegistry $managerRegistry, RequestStack $requestStack)
     {
         try {
-            $this->connection = $managerRegistry->getManager()->getConnection('default')->getWrappedConnection();
+            $this->connection = $managerRegistry->getManager()->getConnection('default')->getNativeConnection();
         } catch (Exception | Throwable $e) {
             $this->connection = null;
         }
