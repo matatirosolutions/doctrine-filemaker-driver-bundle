@@ -1,109 +1,106 @@
 services:
-    fm.script_service:
-        class: MSDev\DoctrineFMDataAPIDriver\Utility\ScriptAccess
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        public: true
-    MSDev\DoctrineFMDataAPIDriver\Utility\ScriptAccess: '@fm.script_service'
+  fm.script_service:
+    class: MSDev\DoctrineFMDataAPIDriver\Utility\ScriptAccess
+    autowire: true
+    autoconfigure: true
+    public: true
+  MSDev\DoctrineFMDataAPIDriver\Utility\ScriptAccess: '@fm.script_service'
 
-    fm.set_globals:
-        class: MSDev\DoctrineFMDataAPIDriver\Utility\SetGlobals
-        arguments:
-            - '@doctrine.dbal.default_connection'
-        public: true
-    MSDev\DoctrineFMDataAPIDriver\Utility\SetGlobals: '@fm.set_globals'
+  fm.set_globals:
+    class: MSDev\DoctrineFMDataAPIDriver\Utility\SetGlobals
+    autowire: true
+    autoconfigure: true
+    public: true
+  MSDev\DoctrineFMDataAPIDriver\Utility\SetGlobals: '@fm.set_globals'
 
-    fm.container_service:
-        class: MSDev\DoctrineFMDataAPIDriver\Utility\ContainerAccess
-        arguments:
-            - '@doctrine.dbal.default_connection'
-            - '@fm.script_service'
-        public: true
-    MSDev\DoctrineFMDataAPIDriver\Utility\ContainerAccess: '@fm.container_service'
+  fm.container_service:
+    class: MSDev\DoctrineFMDataAPIDriver\Utility\ContainerAccess
+    autowire: true
+    autoconfigure: true
+    public: true
+  MSDev\DoctrineFMDataAPIDriver\Utility\ContainerAccess: '@fm.container_service'
 
-    fm.valuelist_service:
-        class: MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager
-        arguments:
-            - '@doctrine.dbal.default_connection'
-            - '@request_stack'
-        public: true
-    MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager: '@fm.valuelist_service'
+  fm.valuelist_service:
+    class: MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager
+    autowire: true
+    autoconfigure: true
+    public: true
+  MSDev\DoctrineFileMakerDriverBundle\Service\ValuelistManager: '@fm.valuelist_service'
 
-    fm.twig.render_select:
-        class: MSDev\DoctrineFileMakerDriverBundle\Twig\SelectExtension
-        arguments:
-            - '@fm.valuelist_service'
-        tags:
-            - { name: twig.extension }
-        public: true
-    MSDev\DoctrineFileMakerDriverBundle\Twig\SelectExtension: '@fm.twig.render_select'
+  fm.twig.render_select:
+    class: MSDev\DoctrineFileMakerDriverBundle\Twig\SelectExtension
+    arguments:
+      - '@fm.valuelist_service'
+    tags:
+      - { name: twig.extension }
+    public: true
+  MSDev\DoctrineFileMakerDriverBundle\Twig\SelectExtension: '@fm.twig.render_select'
 
-    fm.twig.access_valuelist:
-            class: MSDev\DoctrineFileMakerDriverBundle\Twig\ValueListExtension
-            arguments:
-                - '@fm.valuelist_service'
-            tags:
-                - { name: twig.extension }
-            public: true
-    MSDev\DoctrineFileMakerDriverBundle\Twig\ValueListExtension: '@fm.twig.access_valuelist'
+  fm.twig.access_valuelist:
+    class: MSDev\DoctrineFileMakerDriverBundle\Twig\ValueListExtension
+    arguments:
+      - '@fm.valuelist_service'
+    tags:
+      - { name: twig.extension }
+    public: true
+  MSDev\DoctrineFileMakerDriverBundle\Twig\ValueListExtension: '@fm.twig.access_valuelist'
 
-    fm.twig.taxonomy_extension:
-            class: MSDev\DoctrineFileMakerDriverBundle\Twig\TaxonomyExtension
-            arguments:
-                - '@fm.valuelist_service'
-            tags:
-                - { name: twig.extension }
-            public: true
-    MSDev\DoctrineFileMakerDriverBundle\Twig\TaxonomyExtension: '@fm.twig.taxonomy_extension'
+  fm.twig.taxonomy_extension:
+    class: MSDev\DoctrineFileMakerDriverBundle\Twig\TaxonomyExtension
+    arguments:
+      - '@fm.valuelist_service'
+    tags:
+      - { name: twig.extension }
+    public: true
+  MSDev\DoctrineFileMakerDriverBundle\Twig\TaxonomyExtension: '@fm.twig.taxonomy_extension'
 
-    fm.translation_export:
-        class: MSDev\DoctrineFileMakerDriverBundle\Command\TranslationExportCommand
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '@parameter_bag'
-            - '%kernel.project_dir%'
-        tags:
-            - { name: console.command }
+  fm.translation_export:
+    class: MSDev\DoctrineFileMakerDriverBundle\Command\TranslationExportCommand
+    autowire: true
+    autoconfigure: true
+    bind:
+      $projectDir: '%kernel.project_dir%'
+    tags:
+      - { name: console.command }
 
-    fm.dapi_admin_service:
-        class: MSDev\DoctrineFileMakerDriverBundle\Service\DataApiAdminService
-        arguments:
-            - '@parameter_bag'
-        public: true
-    MSDev\DoctrineFileMakerDriverBundle\Service\DataApiAdminService: '@fm.dapi_admin_service'
+  fm.dapi_admin_service:
+    class: MSDev\DoctrineFileMakerDriverBundle\Service\DataApiAdminService
+    arguments:
+      - '@parameter_bag'
+    public: true
+  MSDev\DoctrineFileMakerDriverBundle\Service\DataApiAdminService: '@fm.dapi_admin_service'
 
-    fm.dapi_enable:
-        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\EnableCommand
-        arguments:
-            - '@fm.dapi_admin_service'
-        tags:
-            - { name: console.command }
+  fm.dapi_enable:
+    class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\EnableCommand
+    arguments:
+      - '@fm.dapi_admin_service'
+    tags:
+      - { name: console.command }
 
-    fm.dapi_disable:
-        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\DisableCommand
-        arguments:
-            - '@fm.dapi_admin_service'
-        tags:
-            - { name: console.command }
+  fm.dapi_disable:
+    class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\DisableCommand
+    arguments:
+      - '@fm.dapi_admin_service'
+    tags:
+      - { name: console.command }
 
-    fm.dapi_state:
-        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\StatusCommand
-        arguments:
-            - '@fm.dapi_admin_service'
-        tags:
-            - { name: console.command }
+  fm.dapi_state:
+    class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\StatusCommand
+    arguments:
+      - '@fm.dapi_admin_service'
+    tags:
+      - { name: console.command }
 
-    fm.dapi_reset:
-        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\ResetCommand
-        arguments:
-            - '@fm.dapi_admin_service'
-        tags:
-            - { name: console.command }
+  fm.dapi_reset:
+    class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\ResetCommand
+    arguments:
+      - '@fm.dapi_admin_service'
+    tags:
+      - { name: console.command }
 
-    fm.dapi_verify:
-        class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\VerifyCommand
-        arguments:
-            - '@doctrine.orm.entity_manager'
-            - '@fm.dapi_admin_service'
-        tags:
-            - { name: console.command }
+  fm.dapi_verify:
+    class: MSDev\DoctrineFileMakerDriverBundle\Command\DAPI\VerifyCommand
+    autowire: true
+    autoconfigure: true
+    tags:
+      - { name: console.command }
