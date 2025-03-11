@@ -28,10 +28,10 @@ class ValuelistManager
     private $layout = '';
 
 
-    public function __construct(ManagerRegistry $managerRegistry, RequestStack $requestStack)
+    public function __construct(Connection $connection, RequestStack $requestStack)
     {
         try {
-            $this->connection = $managerRegistry->getManager()->getConnection('default')->getNativeConnection();
+            $this->connection = $connection->getNativeConnection();
         } catch (Exception | Throwable $e) {
             $this->connection = null;
         }
@@ -80,7 +80,7 @@ class ValuelistManager
             throw new LayoutNotDefined('There is no connection to FileMaker');
         }
 
-        if('MSDev\DoctrineFMDataAPIDriver\FMConnection' === get_class($this->connection)) {
+        if('MSDev\DoctrineFMDataAPIDriver\Utility\FMRequest' === get_class($this->connection)) {
             $this->loadDAPIValueLists();
 
             return;
