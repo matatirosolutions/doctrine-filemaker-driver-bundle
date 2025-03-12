@@ -3,7 +3,7 @@
 namespace MSDev\DoctrineFileMakerDriverBundle\DependencyInjection;
 
 use Exception;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\DependencyInjection\Extension\Extension;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\YamlFileLoader;
 use Symfony\Component\DependencyInjection\Exception\RuntimeException;
