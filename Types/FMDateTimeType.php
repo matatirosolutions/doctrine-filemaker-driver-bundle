@@ -49,7 +49,7 @@ class FMDateTimeType extends Type
      */
     public function convertToPHPValue($value, AbstractPlatform $platform)
     {
-        if (empty($value)) {
+        if (empty($value) || $value === '?') {
             return null;
         }
 
