@@ -16,6 +16,8 @@ class TypeRegistry
         $this->registerType('fmdatetime', 'fmdatetime', FMDateTimeType::class);
         $this->registerType('fmtime', 'fmtime', FMTimeType::class);
         $this->registerType('fmhtml', 'fmhtml', FMHTMLType::class);
+        $this->registerType('fmfloat', 'fmfloat', FMFloatType::class);
+        $this->registerType('fmint', 'fmint', FMIntType::class);
         $this->registerType('array', 'array', FMArrayType::class);
     }
 

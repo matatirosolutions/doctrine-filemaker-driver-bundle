@@ -48,16 +48,16 @@ class FMDateType extends Type
 
     public function convertToPHPValue($value, AbstractPlatform $platform): ?DateTime
     {
-        if (empty($value) || $value === '?') {
+        if (empty($value)) {
             return null;
         }
 
         $date = DateTime::createFromFormat('m/d/Y', $value);
-        if($date && $date->format('m/d/Y') === $value) {
+        if ($date && $date->format('m/d/Y') === $value) {
             return $date;
         }
 
-        throw ConversionException::conversionFailed(var_export($value, true), $this->name);
+        return null;
     }
 
     public function requiresSQLCommentHint(AbstractPlatform $platform): bool

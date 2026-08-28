@@ -54,11 +54,11 @@ class FMTimeType extends Type
         }
 
         $date = \DateTime::createFromFormat('H:i:s', $value);
-        if($date && $date->format('H:i:s') === $value) {
+        if ($date && $date->format('H:i:s') === $value) {
             return $date;
         }
 
-        throw ConversionException::conversionFailed(var_export($value, true), $this->name);
+        return null;
     }
 
 }
